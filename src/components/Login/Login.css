@@ -1,0 +1,126 @@
+.login {
+  flex: 1;
+  gap: 5px;
+  display: flex;
+  align-items: center;
+  gap: 173px;
+  overflow: hidden;
+
+  .hero {
+    height: 100%;
+  }
+
+  .form-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+
+    h1 {
+      color: var(--Dark-blue, #10151f);
+      font-family: Poppins;
+      font-size: 42px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+    }
+
+    form {
+      display: flex;
+      width: 554px;
+      flex-direction: column;
+      gap: 46px;
+
+      .inputs {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+
+        div {
+          display: flex;
+          align-items: center;
+          height: 42px;
+          padding: 0 12px;
+          border-radius: 8px;
+          border: 1px solid var(--Grey-2, #e1dfe1);
+          background: var(--White, #fff);
+          position: relative;
+
+          input {
+            position: absolute;
+            width: calc(100% - 24px);
+            height: 100%;
+            outline: none;
+            border: none;
+          }
+
+          input:focus ~ p,
+          input:focus ~ span {
+            opacity: 0;
+            pointer-events: none;
+          }
+
+          p {
+            z-index: 1;
+            color: var(--Dark-blue-2, #3e424a);
+            font-family: Poppins;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+          }
+
+          span {
+            z-index: 1;
+            color: var(--Red, #ff4000);
+            font-family: Poppins;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+          }
+        }
+
+        /* div {
+          display: flex;
+          height: 42px;
+          padding: 0 12px;
+          gap: 8px;
+          border-radius: 8px;
+          border: 1px solid var(--Grey-2, #e1dfe1);
+          background: var(--White, #fff);
+
+          input {
+            width: max-content;
+            min-width: 0;
+            padding: 0;
+            border: none;
+            border: 1px solid black;
+
+            &::placeholder {
+              color: var(--Dark-blue-2, #3e424a);
+              font-family: Poppins;
+              font-size: 14px;
+              font-weight: 400;
+              line-height: normal;
+            }
+
+            &::placeholder {
+                
+            }
+          }
+        } */
+
+        /* input.required::placeholder::after {
+          content: "*";
+          color: var(--Red, #ff4000);
+          margin-left: 4px;
+          font-family: Poppins;
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        } */
+      }
+    }
+  }
+}

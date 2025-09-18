@@ -11,7 +11,7 @@ import ProductsList from "./components/ProductsList/ProductsList";
 function App() {
   return (
     <main>
-      <Header token />
+      <Header />
       <Routes>
         <Route path="/" element={<ProductsList />} />
         <Route path="/product/:id" element={<Product />} />

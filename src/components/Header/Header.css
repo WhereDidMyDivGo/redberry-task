@@ -29,11 +29,12 @@
     }
   }
 
-  .login {
+  .header-login {
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    text-decoration: none;
 
     img {
       width: 13.233px;

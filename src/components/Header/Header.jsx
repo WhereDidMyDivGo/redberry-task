@@ -24,7 +24,7 @@ function Header({ token }) {
     );
   } else {
     content = (
-      <Link to="/login" className="login">
+      <Link to="/login" className="header-login">
         <img src={profileIcon} />
         <p>Log in</p>
       </Link>
