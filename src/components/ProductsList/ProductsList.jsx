@@ -1,12 +1,11 @@
-import "./Products.css";
+import "./ProductsList.css";
 
-function Products() {
-
+function ProductsList() {
   return (
     <>
-
+      <p>product list</p>
     </>
   );
 }
 
-export default Products;
+export default ProductsList;

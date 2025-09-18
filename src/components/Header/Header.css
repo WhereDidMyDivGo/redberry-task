@@ -1,0 +1,88 @@
+.header {
+  display: flex;
+  width: 100%;
+  height: 80px;
+  padding: 10px 100px;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  background: var(--White, #fff);
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    img {
+      width: 16.5px;
+      height: 21px;
+      flex-shrink: 0;
+    }
+
+    p {
+      color: var(--Dark-blue, #10151f);
+      font-family: Poppins;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+    }
+  }
+
+  .login {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+
+    img {
+      width: 13.233px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    p {
+      color: var(--Dark-blue, #10151f);
+      font-family: Poppins;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+  }
+
+  .profile {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+
+    .cartIcon {
+      width: 20.892px;
+      height: 19.5px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    div {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .profileIcon {
+        width: 40px;
+        height: 40px;
+        aspect-ratio: 1/1;
+        border-radius: 40px;
+        border-radius: 40px;
+        background: lightgray 50% / cover no-repeat;
+      }
+
+      .arrow {
+        width: 10px;
+        height: 5.75px;
+        flex-shrink: 0;
+      }
+    }
+  }
+}

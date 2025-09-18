@@ -1,11 +1,10 @@
 import "./Cart.css";
 
-function Cart() {
-
+function Cart({ onClose }) {
   return (
-    <>
-
-    </>
+    <div className="cart" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()}></div>
+    </div>
   );
 }
 
