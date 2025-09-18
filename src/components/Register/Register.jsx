@@ -3,6 +3,7 @@ import "./Register.css";
 import hero from "../../assets/hero.png";
 import eyeIcon from "../../assets/eyeIcon.svg";
 import closedEyeIcon from "../../assets/closedEyeIcon.svg";
+import profile from "../../assets/profile.svg";
 
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
@@ -11,22 +12,62 @@ function Register() {
   const usernameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [avatar, setAvatar] = useState(profile);
+  const [avatarFile, setAvatarFile] = useState(null);
 
   const [usernameFocused, setUsernameFocused] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
-  const confirmPasswordRef = useRef(null);
 
-  const handleRegister = (e) => {};
+  const handleRegister = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("username", username);
+    formData.append("password", password);
+    formData.append("password_confirmation", confirmPassword);
+    if (avatarFile) {
+      formData.append("avatar", avatarFile);
+    }
+
+    console.log(avatarFile, avatarFile?.type);
+    fetch("https://api.redseam.redberryinternship.ge/api/register", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
+  };
+
+  function RenderErrors({ errors }) {
+
+  }
+
+  const handleAvatar = (e) => {
+    if (avatar !== profile) URL.revokeObjectURL(avatar);
+
+    if (e === "reset") {
+      setAvatar(profile);
+      setAvatarFile(null);
+    } else {
+      setAvatar(URL.createObjectURL(e.target.files[0]));
+      setAvatarFile(e.target.files[0]);
+    }
+  };
 
   return (
     <div className="register">
@@ -35,6 +76,15 @@ function Register() {
       <div className="form-wrapper">
         <h1>Registration</h1>
         <form onSubmit={handleRegister}>
+          <div className="pfp">
+            <img src={avatar} />
+            <label>
+              <p>Upload new</p>
+              <input type="file" accept="image/*" onChange={handleAvatar} />
+            </label>
+            <p onClick={() => handleAvatar("reset")}>Remove</p>
+          </div>
+
           <div className="inputs">
             <div className="username">
               <input type="text" ref={usernameRef} value={username} onChange={(e) => setUsername(e.target.value)} onFocus={() => setUsernameFocused(true)} onBlur={() => setUsernameFocused(false)} />
@@ -46,7 +96,7 @@ function Register() {
               )}
             </div>
             <div className="email">
-              <input type="email" ref={emailRef} value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setEmailFocused(true)} onBlur={() => setEmailFocused(false)} />
+              <input autoComplete="email" type="email" ref={emailRef} value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setEmailFocused(true)} onBlur={() => setEmailFocused(false)} />
               {!(emailFocused || email) && (
                 <>
                   <p onClick={() => emailRef.current && emailRef.current.focus()}>Email</p>
@@ -55,7 +105,7 @@ function Register() {
               )}
             </div>
             <div className="password">
-              <input type={showPassword ? "text" : "password"} ref={passwordRef} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} />
+              <input autoComplete="new-password" type={showPassword ? "text" : "password"} ref={passwordRef} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} />
               {!(passwordFocused || password) && (
                 <>
                   <p onClick={() => passwordRef.current && passwordRef.current.focus()}>Password</p>
@@ -67,7 +117,7 @@ function Register() {
               </button>
             </div>
             <div className="confirm-password">
-              <input type={showConfirmPassword ? "text" : "password"} ref={confirmPasswordRef} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onFocus={() => setConfirmPasswordFocused(true)} onBlur={() => setConfirmPasswordFocused(false)} />
+              <input autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} ref={confirmPasswordRef} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onFocus={() => setConfirmPasswordFocused(true)} onBlur={() => setConfirmPasswordFocused(false)} />
               {!(confirmPasswordFocused || confirmPassword) && (
                 <>
                   <p onClick={() => confirmPasswordRef.current && confirmPasswordRef.current.focus()}>Confirm Password</p>
@@ -84,7 +134,6 @@ function Register() {
             <button className="submit" type="submit">
               <p>Register</p>
             </button>
-
             <div className="register-link">
               <p>Already member?</p>
               <Link to="/login">Login</Link>

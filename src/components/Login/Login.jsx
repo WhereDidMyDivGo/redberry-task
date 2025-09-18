@@ -18,7 +18,24 @@ function Login() {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
-  const handleLogin = (e) => {};
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+
+    fetch("https://api.redseam.redberryinternship.ge/api/login", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div className="login">
@@ -29,7 +46,7 @@ function Login() {
         <form onSubmit={handleLogin}>
           <div className="inputs">
             <div className="email">
-              <input type="email" ref={emailRef} value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setEmailFocused(true)} onBlur={() => setEmailFocused(false)} />
+              <input autoComplete="email" type="email" ref={emailRef} value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setEmailFocused(true)} onBlur={() => setEmailFocused(false)} />
               {!(emailFocused || email) && (
                 <>
                   <p onClick={() => emailRef.current && emailRef.current.focus()}>Email or username</p>
@@ -38,7 +55,7 @@ function Login() {
               )}
             </div>
             <div className="password">
-              <input type={showPassword ? "text" : "password"} ref={passwordRef} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} />
+              <input autoComplete="current-password" type={showPassword ? "text" : "password"} ref={passwordRef} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} />
               {!(passwordFocused || password) && (
                 <>
                   <p onClick={() => passwordRef.current && passwordRef.current.focus()}>Password</p>
