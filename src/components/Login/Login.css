@@ -45,6 +45,18 @@
           background: var(--White, #fff);
           position: relative;
 
+          .error-msg {
+            position: absolute;
+            bottom: -20px;
+            left: 6px;
+            color: var(--Red, #ff4000);
+            font-family: Poppins;
+            font-size: 10px;
+            font-style: normal;
+            font-weight: 300;
+            line-height: normal;
+          }
+
           input {
             position: absolute;
             width: calc(100% - 24px - 28px);

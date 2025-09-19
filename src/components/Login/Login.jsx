@@ -6,6 +6,12 @@ import closedEyeIcon from "../../assets/closedEyeIcon.svg";
 
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import * as yup from "yup";
+
+const schema = yup.object().shape({
+  email: yup.string().email("Invalid email").required("The email field is required."),
+  password: yup.string().required("The password field is required."),
+});
 
 function Login() {
   const emailRef = useRef(null);
@@ -18,8 +24,33 @@ function Login() {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleValidation = async () => {
+    try {
+      await schema.validate({ email, password }, { abortEarly: false });
+      return null;
+    } catch (err) {
+      const errorsObj = { errors: {} };
+      if (err.inner && err.inner.length) {
+        err.inner.forEach((e) => {
+          if (!errorsObj.errors[e.path]) errorsObj.errors[e.path] = [];
+          errorsObj.errors[e.path].push(e.message);
+        });
+      } else if (err.path) {
+        errorsObj.errors[err.path] = [err.message];
+      }
+      return errorsObj;
+    }
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
+
+    const validation = await handleValidation();
+    if (validation) {
+      RenderErrors(validation);
+      console.log(validation);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("email", email);
@@ -32,10 +63,46 @@ function Login() {
       },
       body: formData,
     })
-      .then((res) => res.json())
-      .then((data) => console.log(data))
+      .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+      .then(({ ok, data }) => {
+        if (data.message === "Unauthenticated.") {
+          RenderErrors({
+            errors: {
+              email: ["Incorrect email or password."],
+              password: ["Incorrect email or password."],
+            },
+          });
+          return;
+        }
+        document.cookie = `token=${data.token}; path=/; SameSite=Strict`;
+        if (data.errors) RenderErrors({ errors: data.errors });
+        console.log(data);
+        if (data.user && data.user.avatar) localStorage.setItem("avatar", data.user.avatar);
+        if (ok) window.location.href = "/productsList";
+      })
       .catch((err) => console.log(err));
   };
+
+  function RenderErrors({ errors }) {
+    [...document.getElementsByClassName("error-msg")].forEach((el) => el.remove());
+
+    const map = {
+      email: "email",
+      password: "password",
+    };
+
+    Object.entries(map).forEach(([key, id]) => {
+      const msg = errors[key];
+      const divs = document.getElementsByClassName(id);
+
+      [...divs].forEach((div) => {
+        const p = document.createElement("p");
+        p.className = "error-msg";
+        p.textContent = Array.isArray(msg) ? msg : msg;
+        div.appendChild(p);
+      });
+    });
+  }
 
   return (
     <div className="login">

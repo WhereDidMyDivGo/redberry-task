@@ -10,42 +10,37 @@ import arrow from "../../assets/arrow.svg";
 
 function Header() {
   const [cartOpen, setCartOpen] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
 
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token="))
     ?.split("=")[1];
 
+  const handleLogout = () => {
+    localStorage.removeItem("avatar");
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.reload();
+  };
+
+  const handleToggle = () => {
+    setShowLogout((v) => !v);
+    const arrowEl = document.querySelector(".arrow");
+    arrowEl.style.transform = !showLogout ? "rotate(180deg)" : "rotate(0deg)";
+  };
+
   let content;
   if (token) {
     const avatar = localStorage.getItem("avatar");
-
-    const [showLogout, setShowLogout] = useState(false);
-
-    const handleLogout = () => {
-      localStorage.removeItem("avatar");
-      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      window.location.reload();
-    };
 
     content = (
       <div className="profile" style={{ position: "relative" }}>
         <img className="cartIcon" onClick={() => setCartOpen(true)} src={cartIcon} />
         <div>
           <img className="profileIcon" src={avatar || profileIcon} />
-          <img src={arrow} onClick={() => setShowLogout((v) => !v)} style={{ cursor: "pointer" }} />
+          <img className="arrow" src={arrow} onClick={handleToggle} style={{ cursor: "pointer" }} />
           {showLogout && (
-            <button
-              className="logout-btn"
-              style={{
-                position: "absolute",
-                top: "100%",
-                right: 0,
-                zIndex: 10,
-                marginTop: "4px",
-              }}
-              onClick={handleLogout}
-            >
+            <button className="logout-button" onClick={handleLogout}>
               Log out
             </button>
           )}

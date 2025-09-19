@@ -7,6 +7,14 @@ import profile from "../../assets/profile.svg";
 
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import * as yup from "yup";
+
+const schema = yup.object().shape({
+  username: yup.string().required("The username field is required."),
+  email: yup.string().email("Invalid email").required("The email field is required."),
+  password: yup.string().required("The password field is required."),
+  confirmPassword: yup.string().oneOf([yup.ref("password"), null], "The password field confirmation does not match."),
+});
 
 function Register() {
   const usernameRef = useRef(null);
@@ -28,8 +36,32 @@ function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
 
-  const handleRegister = (e) => {
+  const handleValidation = async () => {
+    try {
+      await schema.validate({ username, email, password, confirmPassword }, { abortEarly: false });
+      return null;
+    } catch (err) {
+      const errorsObj = { errors: {} };
+      if (err.inner && err.inner.length) {
+        err.inner.forEach((e) => {
+          if (!errorsObj.errors[e.path]) errorsObj.errors[e.path] = [];
+          errorsObj.errors[e.path].push(e.message);
+        });
+      } else if (err.path) {
+        errorsObj.errors[err.path] = [err.message];
+      }
+      return errorsObj;
+    }
+  };
+
+  const handleRegister = async (e) => {
     e.preventDefault();
+
+    const validation = await handleValidation();
+    if (validation) {
+      RenderErrors(validation);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("email", email);
@@ -40,28 +72,15 @@ function Register() {
 
     fetch("https://api.redseam.redberryinternship.ge/api/register", {
       method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
+      headers: { Accept: "application/json" },
       body: formData,
     })
       .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
       .then(({ ok, data }) => {
-        console.log(data);
-        console.log(data.token);
         document.cookie = `token=${data.token}; path=/; SameSite=Strict`;
-
-        if (data.errors) {
-          RenderErrors({ errors: data.errors });
-        }
-        if (data.user.avatar) {
-          localStorage.setItem("avatar", data.user.avatar);
-        } else {
-          localStorage.removeItem("avatar");
-        }
-        if (ok) {
-          window.location.href = "/productsList";
-        }
+        if (data.errors) RenderErrors({ errors: data.errors });
+        if (data.user.avatar) localStorage.setItem("avatar", data.user.avatar);
+        if (ok) window.location.href = "/productsList";
       })
       .catch((err) => console.log(err));
   };
@@ -73,6 +92,7 @@ function Register() {
       username: "username",
       email: "email",
       password: "password",
+      confirmPassword: "password",
     };
 
     Object.entries(map).forEach(([key, id]) => {
@@ -165,7 +185,7 @@ function Register() {
             <button className="submit" type="submit">
               <p>Register</p>
             </button>
-            <div className="register-link">
+            <div className="login-link">
               <p>Already member?</p>
               <Link to="/login">Login</Link>
             </div>
