@@ -35,6 +35,7 @@ function Register() {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleValidation = async () => {
     try {
@@ -56,10 +57,12 @@ function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const validation = await handleValidation();
     if (validation) {
       RenderErrors(validation);
+      setLoading(false);
       return;
     }
 
@@ -77,12 +80,16 @@ function Register() {
     })
       .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
       .then(({ ok, data }) => {
+        setLoading(false);
         document.cookie = `token=${data.token}; path=/; SameSite=Strict`;
         if (data.errors) RenderErrors({ errors: data.errors });
         if (data.user.avatar) localStorage.setItem("avatar", data.user.avatar);
         if (ok) window.location.href = "/productsList";
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   function RenderErrors({ errors }) {
@@ -182,7 +189,7 @@ function Register() {
           </div>
 
           <div className="register-actions">
-            <button className="submit" type="submit">
+            <button className="submit" type="submit" disabled={loading} style={{ opacity: loading ? 0.6 : 1 }}>
               <p>Register</p>
             </button>
             <div className="login-link">

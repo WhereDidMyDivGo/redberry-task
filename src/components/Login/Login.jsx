@@ -23,6 +23,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleValidation = async () => {
     try {
@@ -44,11 +45,12 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const validation = await handleValidation();
     if (validation) {
       RenderErrors(validation);
-      console.log(validation);
+      setLoading(false);
       return;
     }
 
@@ -72,15 +74,19 @@ function Login() {
               password: ["Incorrect email or password."],
             },
           });
+          setLoading(false);
           return;
         }
+        setLoading(false);
         document.cookie = `token=${data.token}; path=/; SameSite=Strict`;
         if (data.errors) RenderErrors({ errors: data.errors });
-        console.log(data);
         if (data.user && data.user.avatar) localStorage.setItem("avatar", data.user.avatar);
         if (ok) window.location.href = "/productsList";
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   function RenderErrors({ errors }) {
@@ -136,7 +142,7 @@ function Login() {
           </div>
 
           <div className="login-actions">
-            <button className="submit" type="submit">
+            <button className="submit" type="submit" disabled={loading} style={{ opacity: loading ? 0.6 : 1 }}>
               <p>Log in</p>
             </button>
 

@@ -156,6 +156,7 @@
           background: var(--Red, #ff4000);
           border: none;
           cursor: pointer;
+          transition: 0.2s;
 
           p {
             color: var(--White, #fff);
