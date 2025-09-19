@@ -1,10 +1,10 @@
 .register {
   flex: 1;
-  gap: 5px;
   display: flex;
   align-items: center;
   gap: 173px;
   overflow: hidden;
+  padding: 0 10px 0 0;
 
   .hero {
     height: 100%;
@@ -13,6 +13,7 @@
   .form-wrapper {
     display: flex;
     flex-direction: column;
+    width: 554px;
     gap: 48px;
 
     h1 {
@@ -26,7 +27,6 @@
 
     form {
       display: flex;
-      width: 554px;
       flex-direction: column;
       gap: 46px;
 
@@ -71,6 +71,18 @@
           border: 1px solid var(--Grey-2, #e1dfe1);
           background: var(--White, #fff);
           position: relative;
+
+          .error-msg {
+            position: absolute;
+            bottom: -20px;
+            left: 6px;
+            color: var(--Red, #ff4000);
+            font-family: Poppins;
+            font-size: 10px;
+            font-style: normal;
+            font-weight: 300;
+            line-height: normal;
+          }
 
           input {
             position: absolute;

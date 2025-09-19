@@ -1,10 +1,10 @@
 .login {
   flex: 1;
-  gap: 5px;
   display: flex;
   align-items: center;
   gap: 173px;
   overflow: hidden;
+  padding: 0 10px 0 0;
 
   .hero {
     height: 100%;
@@ -13,6 +13,7 @@
   .form-wrapper {
     display: flex;
     flex-direction: column;
+    width: 554px;
     gap: 48px;
 
     h1 {
@@ -26,7 +27,6 @@
 
     form {
       display: flex;
-      width: 554px;
       flex-direction: column;
       gap: 46px;
 

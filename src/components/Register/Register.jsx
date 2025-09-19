@@ -36,11 +36,8 @@ function Register() {
     formData.append("username", username);
     formData.append("password", password);
     formData.append("password_confirmation", confirmPassword);
-    if (avatarFile) {
-      formData.append("avatar", avatarFile);
-    }
+    if (avatarFile) formData.append("avatar", avatarFile);
 
-    console.log(avatarFile, avatarFile?.type);
     fetch("https://api.redseam.redberryinternship.ge/api/register", {
       method: "POST",
       headers: {
@@ -48,13 +45,47 @@ function Register() {
       },
       body: formData,
     })
-      .then((res) => res.json())
-      .then((data) => console.log(data))
+      .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+      .then(({ ok, data }) => {
+        console.log(data);
+        console.log(data.token);
+        document.cookie = `token=${data.token}; path=/; SameSite=Strict`;
+
+        if (data.errors) {
+          RenderErrors({ errors: data.errors });
+        }
+        if (data.user.avatar) {
+          localStorage.setItem("avatar", data.user.avatar);
+        } else {
+          localStorage.removeItem("avatar");
+        }
+        if (ok) {
+          window.location.href = "/productsList";
+        }
+      })
       .catch((err) => console.log(err));
   };
 
   function RenderErrors({ errors }) {
+    [...document.getElementsByClassName("error-msg")].forEach((el) => el.remove());
 
+    const map = {
+      username: "username",
+      email: "email",
+      password: "password",
+    };
+
+    Object.entries(map).forEach(([key, id]) => {
+      const msg = errors[key];
+      const divs = document.getElementsByClassName(id);
+
+      [...divs].forEach((div) => {
+        const p = document.createElement("p");
+        p.className = "error-msg";
+        p.textContent = Array.isArray(msg) ? msg : msg;
+        div.appendChild(p);
+      });
+    });
   }
 
   const handleAvatar = (e) => {
@@ -80,7 +111,7 @@ function Register() {
             <img src={avatar} />
             <label>
               <p>Upload new</p>
-              <input type="file" accept="image/*" onChange={handleAvatar} />
+              <input type="file" accept=".png,.jpg,.jpeg" onChange={handleAvatar} />
             </label>
             <p onClick={() => handleAvatar("reset")}>Remove</p>
           </div>
@@ -116,7 +147,7 @@ function Register() {
                 <img className="eyeIcon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>
             </div>
-            <div className="confirm-password">
+            <div className="password">
               <input autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} ref={confirmPasswordRef} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onFocus={() => setConfirmPasswordFocused(true)} onBlur={() => setConfirmPasswordFocused(false)} />
               {!(confirmPasswordFocused || confirmPassword) && (
                 <>
