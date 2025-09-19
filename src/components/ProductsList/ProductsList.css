@@ -1,3 +1,7 @@
+body {
+  scrollbar-gutter: stable;
+}
+
 .products-list {
   display: flex;
   flex-direction: column;
@@ -122,6 +126,30 @@
       flex-shrink: 0;
       cursor: pointer;
 
+      .shimmer {
+        position: relative;
+        overflow: hidden;
+        background: #f6f7f8;
+      }
+
+      .shimmer:before {
+        content: "";
+        position: absolute;
+        top: -60%;
+        left: -60%;
+        width: 220%;
+        height: 220%;
+        background: linear-gradient(120deg, rgba(246, 247, 248, 0.7) 0%, rgba(230, 230, 230, 0.9) 35%, rgba(255, 255, 255, 0.7) 50%, rgba(230, 230, 230, 0.9) 65%, rgba(246, 247, 248, 0.7) 100%);
+        animation: shimmer-diag 1.2s infinite;
+      }
+
+      .shimmer-img {
+        width: 100%;
+        height: 549px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+      }
+
       img {
         height: 549px;
         align-self: stretch;
@@ -153,6 +181,19 @@
           font-weight: 500;
           line-height: normal;
         }
+
+        .shimmer-name {
+          width: 60%;
+          height: 20px;
+          border-radius: 4px;
+          margin-bottom: 8px;
+        }
+
+        .shimmer-price {
+          width: 40%;
+          height: 16px;
+          border-radius: 4px;
+        }
       }
     }
   }
@@ -166,13 +207,15 @@
     button {
       border: none;
       outline: none;
-      background-color: white;
       display: flex;
       width: 32px;
       height: 32px;
       justify-content: center;
       align-items: center;
       cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid var(--Grey, #f8f6f7);
+      background: var(--White, #fff);
 
       p {
         color: var(--Dark-Grey-400, #212b36);
@@ -182,6 +225,24 @@
         font-style: normal;
         font-weight: 500;
         line-height: 20px;
+        opacity: 0.6;
+      }
+    }
+
+    button.active {
+      border-radius: 4px;
+      border: 1px solid var(--Red, #ff4000);
+      background: var(--White, #fff);
+
+      p {
+        color: var(--Red, #ff4000);
+        text-align: center;
+        font-family: "SF Pro Text";
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 20px;
+        opacity: 1;
       }
     }
 
@@ -203,5 +264,12 @@
         transform: rotate(270deg);
       }
     }
+  }
+}
+
+@keyframes shimmer-diag {
+  100% {
+    top: 60%;
+    left: 60%;
   }
 }
