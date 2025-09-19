@@ -1,4 +1,4 @@
-.header {
+nav {
   display: flex;
   width: 100%;
   height: 80px;
@@ -12,6 +12,8 @@
     display: flex;
     align-items: center;
     gap: 4px;
+    cursor: pointer;
+    text-decoration: none;
 
     img {
       width: 16.5px;
@@ -29,7 +31,7 @@
     }
   }
 
-  .header-login {
+  .nav-login {
     display: flex;
     align-items: center;
     gap: 8px;

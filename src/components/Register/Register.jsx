@@ -10,9 +10,9 @@ import { Link } from "react-router-dom";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
-  username: yup.string().required("The username field is required."),
+  username: yup.string().required("The username field is required.").min(3, "Username must be at least 3 characters"),
   email: yup.string().email("Invalid email").required("The email field is required."),
-  password: yup.string().required("The password field is required."),
+  password: yup.string().required("The password field is required.").min(3, "Password must be at least 3 characters"),
   confirmPassword: yup.string().oneOf([yup.ref("password"), null], "The password field confirmation does not match."),
 });
 
@@ -45,8 +45,7 @@ function Register() {
       const errorsObj = { errors: {} };
       if (err.inner && err.inner.length) {
         err.inner.forEach((e) => {
-          if (!errorsObj.errors[e.path]) errorsObj.errors[e.path] = [];
-          errorsObj.errors[e.path].push(e.message);
+          if (!errorsObj.errors[e.path]) errorsObj.errors[e.path] = [e.message];
         });
       } else if (err.path) {
         errorsObj.errors[err.path] = [err.message];
@@ -99,7 +98,7 @@ function Register() {
       username: "username",
       email: "email",
       password: "password",
-      confirmPassword: "password",
+      confirmPassword: "confirm-password",
     };
 
     Object.entries(map).forEach(([key, id]) => {
@@ -174,7 +173,7 @@ function Register() {
                 <img className="eyeIcon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>
             </div>
-            <div className="password">
+            <div className="confirm-password">
               <input autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} ref={confirmPasswordRef} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onFocus={() => setConfirmPasswordFocused(true)} onBlur={() => setConfirmPasswordFocused(false)} />
               {!(confirmPasswordFocused || confirmPassword) && (
                 <>

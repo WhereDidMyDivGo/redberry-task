@@ -1,0 +1,207 @@
+.products-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 72px 100px 216px;
+  width: 100%;
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    h1 {
+      color: var(--Dark-blue, #10151f);
+      font-family: Poppins;
+      font-size: 42px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+
+      .results {
+        color: var(--Dark-blue-2, #3e424a);
+        font-family: Poppins;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+      }
+
+      .line {
+        width: 1px;
+        height: 14px;
+        background: #e1dfe1;
+      }
+
+      .filter {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+
+        div {
+          display: flex;
+          width: 24px;
+          height: 24px;
+          justify-content: center;
+          align-items: center;
+
+          img {
+            width: 16.5px;
+            height: 15px;
+            flex-shrink: 0;
+          }
+        }
+
+        p {
+          color: var(--Dark-blue, #10151f);
+          font-family: Poppins;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+      }
+
+      .sort {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+
+        p {
+          color: var(--Dark-blue, #10151f);
+          font-family: Poppins;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+
+        div {
+          display: flex;
+          width: 20px;
+          height: 20px;
+          justify-content: center;
+          align-items: center;
+
+          img {
+            width: 10px;
+            height: 5.75px;
+            flex-shrink: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .products {
+    margin: 32px 0 90px;
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 48px 24px;
+    flex-wrap: wrap;
+    width: 100%;
+
+    .product {
+      display: flex;
+      width: 412px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      flex-shrink: 0;
+      cursor: pointer;
+
+      img {
+        height: 549px;
+        align-self: stretch;
+        border-radius: 10px;
+        background: lightgray 50% / cover no-repeat;
+      }
+
+      .description {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        align-self: stretch;
+
+        .name {
+          color: var(--Dark-blue, #10151f);
+          font-family: Poppins;
+          font-size: 18px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+        }
+
+        .price {
+          color: var(--Dark-blue, #10151f);
+          font-family: Poppins;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+        }
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    gap: 8px;
+
+    button {
+      border: none;
+      outline: none;
+      background-color: white;
+      display: flex;
+      width: 32px;
+      height: 32px;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      p {
+        color: var(--Dark-Grey-400, #212b36);
+        text-align: center;
+        font-family: Poppins;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 20px;
+      }
+    }
+
+    .previous,
+    .next {
+      width: 20px;
+      height: 20px;
+
+      img {
+        width: 10px;
+        height: 5.75px;
+        flex-shrink: 0;
+        transform: rotate(90deg);
+      }
+    }
+
+    .next {
+      img {
+        transform: rotate(270deg);
+      }
+    }
+  }
+}

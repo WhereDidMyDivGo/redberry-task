@@ -10,7 +10,7 @@ import * as yup from "yup";
 
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("The email field is required."),
-  password: yup.string().required("The password field is required."),
+  password: yup.string().required("The password field is required.").min(3, "Password must be at least 3 characters"),
 });
 
 function Login() {
@@ -33,8 +33,7 @@ function Login() {
       const errorsObj = { errors: {} };
       if (err.inner && err.inner.length) {
         err.inner.forEach((e) => {
-          if (!errorsObj.errors[e.path]) errorsObj.errors[e.path] = [];
-          errorsObj.errors[e.path].push(e.message);
+          if (!errorsObj.errors[e.path]) errorsObj.errors[e.path] = [e.message];
         });
       } else if (err.path) {
         errorsObj.errors[err.path] = [err.message];

@@ -1,7 +1,7 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 
-import Header from "./components/Header/Header";
+import Nav from "./components/Nav/Nav";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import Success from "./components/Success/Success";
@@ -11,9 +11,9 @@ import ProductsList from "./components/ProductsList/ProductsList";
 function App() {
   return (
     <main>
-      <Header />
+      <Nav />
       <Routes>
-        <Route path="/" element={<ProductsList />} />
+        <Route path="/productsList" element={<ProductsList />} />
         <Route path="/product/:id" element={<Product />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

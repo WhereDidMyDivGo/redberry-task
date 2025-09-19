@@ -1,4 +1,4 @@
-import "./Header.css";
+import "./Nav.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import Cart from "../Cart/Cart";
@@ -8,7 +8,7 @@ import cartIcon from "../../assets/cart.svg";
 import profileIcon from "../../assets/profile.svg";
 import arrow from "../../assets/arrow.svg";
 
-function Header() {
+function Nav() {
   const [cartOpen, setCartOpen] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
 
@@ -49,7 +49,7 @@ function Header() {
     );
   } else {
     content = (
-      <Link to="/login" className="header-login">
+      <Link to="/login" className="nav-login">
         <img src={profileIcon} />
         <p>Log in</p>
       </Link>
@@ -57,15 +57,15 @@ function Header() {
   }
 
   return (
-    <div className="header">
-      <div className="logo">
+    <nav>
+      <Link to="/productsList" className="logo">
         <img src={handEye} />
         <p>RedSeam Clothing</p>
-      </div>
+      </Link>
       {content}
       {cartOpen && <Cart onClose={() => setCartOpen(false)} />}
-    </div>
+    </nav>
   );
 }
 
-export default Header;
+export default Nav;
