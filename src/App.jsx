@@ -8,7 +8,16 @@ import Success from "./components/Success/Success";
 import Product from "./components/Product/Product";
 import ProductsList from "./components/ProductsList/ProductsList";
 
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 function App() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (window.location.pathname === "/") {
+      navigate("/productsList");
+    }
+  }, [navigate]);
   return (
     <main>
       <Nav />

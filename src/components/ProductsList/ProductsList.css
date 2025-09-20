@@ -45,13 +45,14 @@ body {
       }
 
       .filter {
+        position: relative;
         display: flex;
         justify-content: flex-end;
         align-items: center;
         gap: 8px;
         cursor: pointer;
 
-        div {
+        .icon {
           display: flex;
           width: 24px;
           height: 24px;
@@ -72,6 +73,107 @@ body {
           font-style: normal;
           font-weight: 400;
           line-height: normal;
+        }
+
+        .filter-modal {
+          position: absolute;
+          display: none;
+          bottom: calc(-137px + -9px);
+          right: -16px;
+          width: 392px;
+          padding: 16px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 20px;
+          border-radius: 8px;
+          border: 1px solid var(--Grey-2, #e1dfe1);
+          background: var(--White, #fff);
+          cursor: default;
+
+          h2 {
+            color: var(--Dark-blue, #10151f);
+            font-family: Poppins;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+          }
+
+          .filter-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+            gap: 10px;
+            align-self: stretch;
+
+            .inputs {
+              display: flex;
+              align-items: flex-start;
+              gap: 10px;
+              align-self: stretch;
+
+              input {
+                display: flex;
+                height: 42px;
+                padding: 0 12px;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 8px;
+                align-self: stretch;
+                border-radius: 8px;
+                border: 1px solid var(--Grey-2, #e1dfe1);
+                background: var(--White, #fff);
+                width: 100%;
+                outline: none;
+                background-color: white;
+
+                &::placeholder {
+                  color: transparent;
+                  font-family: Poppins;
+                  font-size: 14px;
+                  font-style: normal;
+                  font-weight: 400;
+                  line-height: normal;
+                  color: transparent;
+                }
+              }
+
+              .from::placeholder {
+                background: linear-gradient(to right, var(--Dark-blue2, #3e424a) 0 25%, var(--Red, #ff4000) 25% 100%);
+                background-clip: text;
+              }
+
+              .to::placeholder {
+                background: linear-gradient(to right, var(--Dark-blue2, #3e424a) 0 12%, var(--Red, #ff4000) 12% 100%);
+                background-clip: text;
+              }
+            }
+
+            button {
+              display: flex;
+              width: 124px;
+              height: 41px;
+              padding: 10px 20px;
+              justify-content: center;
+              align-items: center;
+              gap: 10px;
+              border-radius: 10px;
+              background: var(--Red, #ff4000);
+              border: none;
+              outline: none;
+              cursor: pointer;
+
+              p {
+                color: var(--White, #fff);
+                font-family: Poppins;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+              }
+            }
+          }
         }
       }
 

@@ -8,9 +8,8 @@ import { useEffect, useState } from "react";
 function ProductsList() {
   const [products, setProducts] = useState({ data: [], meta: {}, links: {} });
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchProducts = (page = 1) => {
+  const fetchProducts = (page) => {
     setLoading(true);
     fetch(`https://api.redseam.redberryinternship.ge/api/products?page=${page}`, {
       method: "GET",
@@ -19,7 +18,6 @@ function ProductsList() {
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
-        setCurrentPage(data.meta?.current_page || 1);
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
@@ -28,6 +26,17 @@ function ProductsList() {
   useEffect(() => {
     fetchProducts(1);
   }, []);
+
+  const handleFilterClick = (e) => {
+    const modal = document.querySelector(".filter-modal");
+    if (modal.contains(e.target)) return;
+
+    if (modal.style.display === "flex") {
+      modal.style.display = "none";
+    } else {
+      modal.style.display = "flex";
+    }
+  };
 
   return (
     <div className="products-list">
@@ -39,9 +48,24 @@ function ProductsList() {
             {products.meta?.from || 0}–{products.meta?.to || 0} of {products.meta?.total || 0} results
           </p>
           <span className="line"></span>
-          <div className="filter">
-            <img src={filterIcon} alt="Filter" />
+          <div className="filter" onClick={(e) => handleFilterClick(e)}>
+            <div className="icon">
+              <img src={filterIcon} alt="Filter" />
+            </div>
             <p>Filter</p>
+            <div className="filter-modal">
+              <h2>Select price</h2>
+              <div className="filter-controls">
+                <div className="inputs">
+                  <input className="from" type="text" placeholder="From *" />
+                  <input className="to" type="text" placeholder="To *" />
+                </div>
+
+                <button>
+                  <p>Apply</p>
+                </button>
+              </div>
+            </div>
           </div>
           <div className="sort">
             <p>Sort by</p>
