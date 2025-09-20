@@ -8,10 +8,31 @@ import { useEffect, useState } from "react";
 function ProductsList() {
   const [products, setProducts] = useState({ data: [], meta: {}, links: {} });
   const [loading, setLoading] = useState(false);
+  const [filterFrom, setFilterFrom] = useState("");
+  const [filterTo, setFilterTo] = useState("");
 
-  const fetchProducts = (page) => {
+  const buildQuery = (params) => {
+    return Object.keys(params)
+      .filter((k) => params[k] !== undefined && params[k] !== "")
+      .map((k) => `${k}=${params[k]}`)
+      .join("&");
+  };
+
+  const fetchProducts = (page, filters) => {
     setLoading(true);
-    fetch(`https://api.redseam.redberryinternship.ge/api/products?page=${page}`, {
+    const params = { page };
+    if (filters.price_from) params["filter[price_from]"] = filters.price_from;
+    if (filters.price_to) params["filter[price_to]"] = filters.price_to;
+    const query = buildQuery(params);
+    const url = `https://api.redseam.redberryinternship.ge/api/products?${query}`;
+
+    const urlParams = new URLSearchParams();
+    urlParams.set("page", page);
+    if (filters.price_from) urlParams.set("price_from", filters.price_from);
+    if (filters.price_to) urlParams.set("price_to", filters.price_to);
+    window.history.replaceState(null, "", `?${urlParams.toString()}`);
+
+    fetch(url, {
       method: "GET",
       headers: { Accept: "application/json" },
     })
@@ -24,7 +45,13 @@ function ProductsList() {
   };
 
   useEffect(() => {
-    fetchProducts(1);
+    const params = new URLSearchParams(window.location.search);
+    const page = parseInt(params.get("page")) || 1;
+    const price_from = params.get("price_from") || "";
+    const price_to = params.get("price_to") || "";
+    setFilterFrom(price_from);
+    setFilterTo(price_to);
+    fetchProducts(page, { price_from, price_to });
   }, []);
 
   const handleFilterClick = (e) => {
@@ -36,6 +63,21 @@ function ProductsList() {
     } else {
       modal.style.display = "flex";
     }
+  };
+
+  const blockInvalidKeys = (e) => {
+    if (e.key === "-" || e.key === "+" || e.key === "e") e.preventDefault();
+  };
+
+  const handleFrom = (e) => setFilterFrom(e.target.value);
+  const handleTo = (e) => setFilterTo(e.target.value);
+
+  const handleFilter = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    fetchProducts(1, { price_from: filterFrom, price_to: filterTo });
+    const modal = document.querySelector(".filter-modal");
+    if (modal) modal.style.display = "none";
   };
 
   return (
@@ -53,23 +95,23 @@ function ProductsList() {
               <img src={filterIcon} alt="Filter" />
             </div>
             <p>Filter</p>
-            <div className="filter-modal">
+            <form className="filter-modal" onSubmit={handleFilter}>
               <h2>Select price</h2>
               <div className="filter-controls">
                 <div className="inputs">
                   <label htmlFor="filter-from">
-                    <input id="filter-from" type="text" placeholder="From *" />
+                    <input id="filter-from" type="number" placeholder="From *" min="0" required value={filterFrom} onChange={handleFrom} onKeyDown={blockInvalidKeys} />
                   </label>
                   <label htmlFor="filter-to">
-                    <input id="filter-to" type="text" placeholder="To *" />
+                    <input id="filter-to" type="number" placeholder="To *" min="0" required value={filterTo} onChange={handleTo} onKeyDown={blockInvalidKeys} />
                   </label>
                 </div>
 
-                <button>
+                <button className="submit" type="submit">
                   <p>Apply</p>
                 </button>
               </div>
-            </div>
+            </form>
           </div>
           <div className="sort">
             <p>Sort by</p>
@@ -107,7 +149,7 @@ function ProductsList() {
         <button
           className="previous"
           onClick={() => {
-            if (products.meta?.current_page > 1) fetchProducts(products.meta.current_page - 1);
+            if (products.meta?.current_page > 1) fetchProducts(products.meta.current_page - 1, { price_from: filterFrom, price_to: filterTo });
           }}
           disabled={products.meta?.current_page === 1}
         >
@@ -135,7 +177,7 @@ function ProductsList() {
               );
             }
             pageButtons.push(
-              <button key={page} className={page === current ? "active" : ""} onClick={() => fetchProducts(page)} disabled={page === current}>
+              <button key={page} className={page === current ? "active" : ""} onClick={() => fetchProducts(page, { price_from: filterFrom, price_to: filterTo })} disabled={page === current}>
                 <p>{page}</p>
               </button>
             );
@@ -147,7 +189,7 @@ function ProductsList() {
         <button
           className="next"
           onClick={() => {
-            if (products.meta?.current_page < products.meta?.last_page) fetchProducts(products.meta.current_page + 1);
+            if (products.meta?.current_page < products.meta?.last_page) fetchProducts(products.meta.current_page + 1, { price_from: filterFrom, price_to: filterTo });
           }}
           disabled={products.meta?.current_page === products.meta?.last_page}
         >
