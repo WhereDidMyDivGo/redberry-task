@@ -1,7 +1,3 @@
-body {
-  scrollbar-gutter: stable;
-}
-
 .products-list {
   display: flex;
   flex-direction: column;
@@ -52,7 +48,7 @@ body {
         gap: 8px;
         cursor: pointer;
 
-        .icon {
+        .filterIcon {
           display: flex;
           width: 24px;
           height: 24px;
@@ -78,7 +74,6 @@ body {
         .filter-modal {
           position: absolute;
           z-index: 1;
-          display: none;
           top: calc(24px + 9.5px);
           right: -16px;
           width: 392px;
@@ -220,6 +215,45 @@ body {
     }
   }
 
+  .filters {
+    display: inline-flex;
+    padding: 8px 10px 8px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    border-radius: 50px;
+    border: 1px solid var(--Grey-2, #e1dfe1);
+    align-self: flex-start;
+    margin: 19px 0 0 0;
+
+    p {
+      color: var(--Dark-blue-2, #3e424a);
+      font-family: Poppins;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    button {
+      width: 12px;
+      height: 12px;
+      aspect-ratio: 1/1;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        width: 6.75px;
+        height: 6.75px;
+        flex-shrink: 0;
+      }
+    }
+  }
+
   .products {
     margin: 32px 0 90px;
     display: flex;
@@ -228,6 +262,10 @@ body {
     gap: 48px 24px;
     flex-wrap: wrap;
     flex: 1;
+
+    &.includes-filters {
+      margin: 26px 0 90px;
+    }
 
     .product {
       display: flex;

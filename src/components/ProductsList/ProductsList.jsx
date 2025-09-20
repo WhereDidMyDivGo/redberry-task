@@ -2,6 +2,7 @@ import "./ProductsList.css";
 
 import filterIcon from "../../assets/filterIcon.svg";
 import arrow from "../../assets/arrow.svg";
+import xIcon from "../../assets/xIcon.svg";
 
 import { useEffect, useState } from "react";
 
@@ -10,21 +11,15 @@ function ProductsList() {
   const [loading, setLoading] = useState(false);
   const [filterFrom, setFilterFrom] = useState("");
   const [filterTo, setFilterTo] = useState("");
-
-  const buildQuery = (params) => {
-    return Object.keys(params)
-      .filter((k) => params[k] !== undefined && params[k] !== "")
-      .map((k) => `${k}=${params[k]}`)
-      .join("&");
-  };
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const fetchProducts = (page, filters) => {
     setLoading(true);
-    const params = { page };
-    if (filters.price_from) params["filter[price_from]"] = filters.price_from;
-    if (filters.price_to) params["filter[price_to]"] = filters.price_to;
-    const query = buildQuery(params);
-    const url = `https://api.redseam.redberryinternship.ge/api/products?${query}`;
+    const apiParams = new URLSearchParams();
+    apiParams.set("page", page);
+    if (filters.price_from) apiParams.set("filter[price_from]", filters.price_from);
+    if (filters.price_to) apiParams.set("filter[price_to]", filters.price_to);
+    const url = `https://api.redseam.redberryinternship.ge/api/products?${apiParams.toString()}`;
 
     const urlParams = new URLSearchParams();
     urlParams.set("page", page);
@@ -54,15 +49,8 @@ function ProductsList() {
     fetchProducts(page, { price_from, price_to });
   }, []);
 
-  const handleFilterClick = (e) => {
-    const modal = document.querySelector(".filter-modal");
-    if (modal.contains(e.target)) return;
-
-    if (modal.style.display === "flex") {
-      modal.style.display = "none";
-    } else {
-      modal.style.display = "flex";
-    }
+  const handleFilterClick = () => {
+    setIsFilterModalOpen((prev) => !prev);
   };
 
   const blockInvalidKeys = (e) => {
@@ -76,8 +64,32 @@ function ProductsList() {
     e.preventDefault();
     setLoading(true);
     fetchProducts(1, { price_from: filterFrom, price_to: filterTo });
-    const modal = document.querySelector(".filter-modal");
-    if (modal) modal.style.display = "none";
+    setIsFilterModalOpen(false);
+  };
+
+  const getFiltersFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      price_from: params.get("price_from") || "",
+      price_to: params.get("price_to") || "",
+    };
+  };
+
+  const clearFilters = () => {
+    setFilterFrom("");
+    setFilterTo("");
+    const params = new URLSearchParams(window.location.search);
+    params.delete("price_from");
+    params.delete("price_to");
+    params.set("page", 1);
+    window.history.replaceState(null, "", `?${params.toString()}`);
+    fetchProducts(1, { price_from: "", price_to: "" });
+    setIsFilterModalOpen(false);
+  };
+
+  const filtersInUrl = () => {
+    const { price_from, price_to } = getFiltersFromUrl();
+    return price_from !== "" || price_to !== "";
   };
 
   return (
@@ -87,15 +99,15 @@ function ProductsList() {
 
         <div className="controls">
           <p className="results">
-            {products.meta?.from || 0}–{products.meta?.to || 0} of {products.meta?.total || 0} results
+            {products.meta.from || 0}–{products.meta.to || 0} of {products.meta.total || 0} results
           </p>
           <span className="line"></span>
-          <div className="filter" onClick={(e) => handleFilterClick(e)}>
-            <div className="icon">
+          <div className="filter" onClick={handleFilterClick}>
+            <div className="filterIcon">
               <img src={filterIcon} alt="Filter" />
             </div>
             <p>Filter</p>
-            <form className="filter-modal" onSubmit={handleFilter}>
+            <form className="filter-modal" onSubmit={handleFilter} onClick={(e) => e.stopPropagation()} style={{ display: isFilterModalOpen ? "flex" : "none" }}>
               <h2>Select price</h2>
               <div className="filter-controls">
                 <div className="inputs">
@@ -122,7 +134,16 @@ function ProductsList() {
         </div>
       </header>
 
-      <div className="products">
+      {filtersInUrl() && (
+        <div className="filters">
+          <p>{`Price: ${getFiltersFromUrl().price_from}-${getFiltersFromUrl().price_to}`}</p>
+          <button className="clear-filters" onClick={clearFilters}>
+            <img src={xIcon} alt="Clear filters" />
+          </button>
+        </div>
+      )}
+
+      <div className={`products${filtersInUrl() ? " includes-filters" : ""}`}>
         {loading
           ? Array.from({ length: 10 }).map((_, idx) => (
               <div className="product" key={"shimmer-" + idx}>
@@ -149,16 +170,16 @@ function ProductsList() {
         <button
           className="previous"
           onClick={() => {
-            if (products.meta?.current_page > 1) fetchProducts(products.meta.current_page - 1, { price_from: filterFrom, price_to: filterTo });
+            if (products.meta.current_page > 1) fetchProducts(products.meta.current_page - 1, getFiltersFromUrl());
           }}
-          disabled={products.meta?.current_page === 1}
+          disabled={products.meta.current_page === 1}
         >
           <img src={arrow} alt="Previous" />
         </button>
 
         {(() => {
-          const total = products.meta?.last_page || 1;
-          const current = products.meta?.current_page || 1;
+          const total = products.meta.last_page || 1;
+          const current = products.meta.current_page || 1;
           const pages = [];
           for (let i = 1; i <= total; i++) {
             if (i === 1 || i === 2 || i === total || i === total - 1 || Math.abs(i - current) <= 1) {
@@ -171,13 +192,13 @@ function ProductsList() {
           uniquePages.forEach((page, idx) => {
             if (page - last > 1) {
               pageButtons.push(
-                <button key={"ellipsis-" + page + "-" + last} disabled style={{ background: "none", cursor: "default" }}>
+                <button key={"ellipsis-" + page + "-" + last} disabled style={{}}>
                   <p>...</p>
                 </button>
               );
             }
             pageButtons.push(
-              <button key={page} className={page === current ? "active" : ""} onClick={() => fetchProducts(page, { price_from: filterFrom, price_to: filterTo })} disabled={page === current}>
+              <button key={page} className={page === current ? "active" : ""} onClick={() => fetchProducts(page, getFiltersFromUrl())} disabled={page === current}>
                 <p>{page}</p>
               </button>
             );
@@ -189,9 +210,9 @@ function ProductsList() {
         <button
           className="next"
           onClick={() => {
-            if (products.meta?.current_page < products.meta?.last_page) fetchProducts(products.meta.current_page + 1, { price_from: filterFrom, price_to: filterTo });
+            if (products.meta.current_page < products.meta.last_page) fetchProducts(products.meta.current_page + 1, getFiltersFromUrl());
           }}
-          disabled={products.meta?.current_page === products.meta?.last_page}
+          disabled={products.meta.current_page === products.meta.last_page}
         >
           <img src={arrow} alt="Next" />
         </button>
