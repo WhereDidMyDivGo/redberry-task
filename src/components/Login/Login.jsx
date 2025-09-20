@@ -14,15 +14,9 @@ const schema = yup.object().shape({
 });
 
 function Login() {
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
-  const [emailFocused, setEmailFocused] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleValidation = async () => {
@@ -98,13 +92,13 @@ function Login() {
 
     Object.entries(map).forEach(([key, id]) => {
       const msg = errors[key];
-      const divs = document.getElementsByClassName(id);
+      const labels = document.getElementsByClassName(id);
 
-      [...divs].forEach((div) => {
+      [...labels].forEach((label) => {
         const p = document.createElement("p");
         p.className = "error-msg";
         p.textContent = Array.isArray(msg) ? msg : msg;
-        div.appendChild(p);
+        label.appendChild(p);
       });
     });
   }
@@ -117,27 +111,15 @@ function Login() {
         <h1>Log in</h1>
         <form onSubmit={handleLogin}>
           <div className="inputs">
-            <div className="email">
-              <input autoComplete="email" type="email" ref={emailRef} value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setEmailFocused(true)} onBlur={() => setEmailFocused(false)} />
-              {!(emailFocused || email) && (
-                <>
-                  <p onClick={() => emailRef.current && emailRef.current.focus()}>Email or username</p>
-                  <span onClick={() => emailRef.current && emailRef.current.focus()}>*</span>
-                </>
-              )}
-            </div>
-            <div className="password">
-              <input autoComplete="current-password" type={showPassword ? "text" : "password"} ref={passwordRef} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} />
-              {!(passwordFocused || password) && (
-                <>
-                  <p onClick={() => passwordRef.current && passwordRef.current.focus()}>Password</p>
-                  <span onClick={() => passwordRef.current && passwordRef.current.focus()}>*</span>
-                </>
-              )}
+            <label htmlFor="login-email" className="email">
+              <input id="login-email" autoComplete="email" type="email" placeholder="Email or username *" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </label>
+            <label htmlFor="login-password" className="password">
+              <input id="login-password" autoComplete="current-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={password} onChange={(e) => setPassword(e.target.value)} />
               <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
                 <img className="eyeIcon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>
-            </div>
+            </label>
           </div>
 
           <div className="login-actions">

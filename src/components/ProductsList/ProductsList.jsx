@@ -57,8 +57,12 @@ function ProductsList() {
               <h2>Select price</h2>
               <div className="filter-controls">
                 <div className="inputs">
-                  <input className="from" type="text" placeholder="From *" />
-                  <input className="to" type="text" placeholder="To *" />
+                  <label htmlFor="filter-from">
+                    <input id="filter-from" type="text" placeholder="From *" />
+                  </label>
+                  <label htmlFor="filter-to">
+                    <input id="filter-to" type="text" placeholder="To *" />
+                  </label>
                 </div>
 
                 <button>

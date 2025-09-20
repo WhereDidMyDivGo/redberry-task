@@ -17,24 +17,14 @@ const schema = yup.object().shape({
 });
 
 function Register() {
-  const usernameRef = useRef(null);
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-  const confirmPasswordRef = useRef(null);
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState(profile);
   const [avatarFile, setAvatarFile] = useState(null);
-
-  const [usernameFocused, setUsernameFocused] = useState(false);
-  const [emailFocused, setEmailFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleValidation = async () => {
@@ -103,13 +93,13 @@ function Register() {
 
     Object.entries(map).forEach(([key, id]) => {
       const msg = errors[key];
-      const divs = document.getElementsByClassName(id);
+      const labels = document.getElementsByClassName(id);
 
-      [...divs].forEach((div) => {
+      [...labels].forEach((label) => {
         const p = document.createElement("p");
         p.className = "error-msg";
         p.textContent = Array.isArray(msg) ? msg : msg;
-        div.appendChild(p);
+        label.appendChild(p);
       });
     });
   }
@@ -143,48 +133,24 @@ function Register() {
           </div>
 
           <div className="inputs">
-            <div className="username">
-              <input type="text" ref={usernameRef} value={username} onChange={(e) => setUsername(e.target.value)} onFocus={() => setUsernameFocused(true)} onBlur={() => setUsernameFocused(false)} />
-              {!(usernameFocused || username) && (
-                <>
-                  <p onClick={() => usernameRef.current && usernameRef.current.focus()}>Username</p>
-                  <span onClick={() => usernameRef.current && usernameRef.current.focus()}>*</span>
-                </>
-              )}
-            </div>
-            <div className="email">
-              <input autoComplete="email" type="email" ref={emailRef} value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setEmailFocused(true)} onBlur={() => setEmailFocused(false)} />
-              {!(emailFocused || email) && (
-                <>
-                  <p onClick={() => emailRef.current && emailRef.current.focus()}>Email</p>
-                  <span onClick={() => emailRef.current && emailRef.current.focus()}>*</span>
-                </>
-              )}
-            </div>
-            <div className="password">
-              <input autoComplete="new-password" type={showPassword ? "text" : "password"} ref={passwordRef} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} />
-              {!(passwordFocused || password) && (
-                <>
-                  <p onClick={() => passwordRef.current && passwordRef.current.focus()}>Password</p>
-                  <span onClick={() => passwordRef.current && passwordRef.current.focus()}>*</span>
-                </>
-              )}
+            <label htmlFor="register-username" className="username">
+              <input id="register-username" type="text" placeholder="Username *" value={username} onChange={(e) => setUsername(e.target.value)} />
+            </label>
+            <label htmlFor="register-email" className="email">
+              <input id="register-email" autoComplete="email" type="email" placeholder="Email *" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </label>
+            <label htmlFor="register-password" className="password">
+              <input id="register-password" autoComplete="new-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={password} onChange={(e) => setPassword(e.target.value)} />
               <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
                 <img className="eyeIcon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>
-            </div>
-            <div className="confirm-password">
-              <input autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} ref={confirmPasswordRef} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onFocus={() => setConfirmPasswordFocused(true)} onBlur={() => setConfirmPasswordFocused(false)} />
-              {!(confirmPasswordFocused || confirmPassword) && (
-                <>
-                  <p onClick={() => confirmPasswordRef.current && confirmPasswordRef.current.focus()}>Confirm Password</p>
-                  <span onClick={() => confirmPasswordRef.current && confirmPasswordRef.current.focus()}>*</span>
-                </>
-              )}
+            </label>
+            <label htmlFor="register-confirm-password" className="confirm-password">
+              <input id="register-confirm-password" autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password *" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
               <button className="toggle-password" type="button" onClick={() => setShowConfirmPassword((prev) => !prev)}>
                 <img className="eyeIcon" src={showConfirmPassword ? closedEyeIcon : eyeIcon} alt={showConfirmPassword ? "Hide password" : "Show password"} />
               </button>
-            </div>
+            </label>
           </div>
 
           <div className="register-actions">
