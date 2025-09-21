@@ -1,5 +1,6 @@
 import "./Product.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useCart } from "../../context/CartContext";
 import { useParams } from "react-router-dom";
 
 import arrow from "../../assets/arrow.svg";
@@ -10,6 +11,15 @@ function Product() {
   const [product, setProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const colorsRef = useRef(null);
+  const sizesRef = useRef(null);
+  const submitRef = useRef(null);
+  const [shake, setShake] = useState(false);
+  const [colorInvalid, setColorInvalid] = useState(false);
+  const [sizeInvalid, setSizeInvalid] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { setCartOpen } = useCart();
 
   useEffect(() => {
     fetch(`https://api.redseam.redberryinternship.ge/api/products/${id}`)
@@ -20,10 +30,65 @@ function Product() {
       .catch((err) => console.error(err));
   }, [id]);
 
+  const addToCart = (e) => {
+    e.preventDefault();
+    let invalid = false;
+
+    switch (true) {
+      case !selectedColor:
+        setColorInvalid(true);
+        invalid = true;
+        setTimeout(() => setColorInvalid(false), 1500);
+      case !selectedSize:
+        setSizeInvalid(true);
+        invalid = true;
+        setTimeout(() => setSizeInvalid(false), 1500);
+        break;
+      default:
+        break;
+    }
+
+    if (invalid) {
+      setShake(true);
+      setTimeout(() => setShake(false), 400);
+      return;
+    }
+
+    setLoading(true);
+    const cartData = new FormData();
+    cartData.append("quantity", quantity);
+    cartData.append("color", selectedColor);
+    cartData.append("size", selectedSize);
+
+    fetch(`https://api.redseam.redberryinternship.ge/api/cart/products/${id}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${
+          document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1]
+        }`,
+      },
+      body: cartData,
+    })
+      .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+      .then(({ ok, data }) => {
+        setLoading(false);
+        console.log(data);
+        if (ok) setCartOpen(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
+
   return (
     <div className="product-container">
       <p className="page-title">Listing / Product</p>
-      <div className="product-content">
+      <form className="product-content" onSubmit={(e) => addToCart(e)}>
         <div className="pictures">
           <div className="mini-pics-list">{product ? product.images.map((img, idx) => <img key={idx} className="mini-pic" src={img} />) : Array.from({ length: 5 }).map((_, idx) => <div key={idx} className="shimmer shimmer-mini-pic" />)}</div>
           {product ? <img className="main-pic" src={product.cover_image} alt={product.name} /> : <div className="shimmer shimmer-main-pic" />}
@@ -35,12 +100,12 @@ function Product() {
           </header>
 
           <div className="options">
-            <div className="colors">
+            <div className={`colors ${colorInvalid ? "invalid" : ""}`} ref={colorsRef}>
               <p>Color: {selectedColor ? selectedColor : "Select color"}</p>
               <div className="available-colors">
                 {product
                   ? product.available_colors.map((color, idx) => (
-                      <button key={idx} style={{}} onClick={() => setSelectedColor(color)} className={selectedColor === color ? "selected" : ""}>
+                      <button type="button" key={idx} style={{}} onClick={() => setSelectedColor(color)} className={selectedColor === color ? "selected" : ""}>
                         <span style={{ backgroundColor: color }}></span>
                       </button>
                     ))
@@ -48,12 +113,12 @@ function Product() {
               </div>
             </div>
 
-            <div className="sizes">
+            <div className={`sizes ${sizeInvalid ? "invalid" : ""}`} ref={sizesRef}>
               <p>Size: {selectedSize ? selectedSize : "Select size"}</p>
               <div className="available-sizes">
                 {product
                   ? product.available_sizes.map((size, idx) => (
-                      <button key={idx} onClick={() => setSelectedSize(size)} className={selectedSize === size ? "selected" : ""}>
+                      <button type="button" key={idx} onClick={() => setSelectedSize(size)} className={selectedSize === size ? "selected" : ""}>
                         <p>{size}</p>
                       </button>
                     ))
@@ -63,14 +128,17 @@ function Product() {
 
             <div className="quantity">
               <p>Quantity</p>
-              <button disabled={product === null}>
-                <span>1</span>
-                <img src={arrow} />
-              </button>
+              <select className="quantity-select" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} disabled={product === null}>
+                {[...Array(10)].map((_, idx) => (
+                  <option key={idx + 1} value={idx + 1}>
+                    {idx + 1}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          <button className="submit" disabled={product === null}>
+          <button className={`submit ${shake ? "shake" : ""}`} type="submit" disabled={product === null || loading} ref={submitRef} style={{ opacity: loading ? 0.6 : 1 }}>
             <img src={cartIcon} />
             <p>Add to cart</p>
           </button>
@@ -89,7 +157,7 @@ function Product() {
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

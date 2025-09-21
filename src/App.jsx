@@ -10,6 +10,7 @@ import ProductsList from "./components/ProductsList/ProductsList";
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   const navigate = useNavigate();
@@ -19,15 +20,17 @@ function App() {
     }
   }, [navigate]);
   return (
-    <main>
-      <Nav />
-      <Routes>
-        <Route path="/productsList" element={<ProductsList />} />
-        <Route path="/product/:id" element={<Product />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </main>
+    <CartProvider>
+      <main>
+        <Nav />
+        <Routes>
+          <Route path="/productsList" element={<ProductsList />} />
+          <Route path="/product/:id" element={<Product />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </main>
+    </CartProvider>
   );
 }
 

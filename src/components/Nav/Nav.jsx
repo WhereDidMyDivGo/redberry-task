@@ -1,6 +1,7 @@
 import "./Nav.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useCart } from "../../context/CartContext";
 import Cart from "../Cart/Cart";
 
 import handEye from "../../assets/HandEye.svg";
@@ -9,7 +10,7 @@ import profileIcon from "../../assets/profile.svg";
 import arrow from "../../assets/arrow.svg";
 
 function Nav() {
-  const [cartOpen, setCartOpen] = useState(false);
+  const { cartOpen, setCartOpen } = useCart();
   const [showLogout, setShowLogout] = useState(false);
 
   const token = document.cookie
