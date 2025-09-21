@@ -5,26 +5,32 @@ import arrow from "../../assets/arrow.svg";
 import xIcon from "../../assets/xIcon.svg";
 
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 function ProductsList() {
+  const location = useLocation();
   const [products, setProducts] = useState({ data: [], meta: {}, links: {} });
   const [loading, setLoading] = useState(false);
   const [filterFrom, setFilterFrom] = useState("");
   const [filterTo, setFilterTo] = useState("");
+  const [sortBy, setSortBy] = useState("");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
-  const fetchProducts = (page, filters) => {
+  const fetchProducts = (page, filters, sort) => {
     setLoading(true);
     const apiParams = new URLSearchParams();
     apiParams.set("page", page);
     if (filters.price_from) apiParams.set("filter[price_from]", filters.price_from);
     if (filters.price_to) apiParams.set("filter[price_to]", filters.price_to);
+    if (sort) apiParams.set("sort", sort);
     const url = `https://api.redseam.redberryinternship.ge/api/products?${apiParams.toString()}`;
 
     const urlParams = new URLSearchParams();
     urlParams.set("page", page);
     if (filters.price_from) urlParams.set("price_from", filters.price_from);
     if (filters.price_to) urlParams.set("price_to", filters.price_to);
+    if (sort) urlParams.set("sort", sort);
     window.history.replaceState(null, "", `?${urlParams.toString()}`);
 
     fetch(url, {
@@ -40,31 +46,47 @@ function ProductsList() {
   };
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const page = parseInt(params.get("page")) || 1;
     const price_from = params.get("price_from") || "";
     const price_to = params.get("price_to") || "";
+    const sort = params.get("sort") || "";
     setFilterFrom(price_from);
     setFilterTo(price_to);
-    fetchProducts(page, { price_from, price_to });
-  }, []);
+    setSortBy(sort);
+    fetchProducts(page, { price_from, price_to }, sort);
+  }, [location.key]);
 
-  const handleFilterClick = () => {
+  const toggleFilterModal = () => {
+    setIsSortModalOpen(false);
     setIsFilterModalOpen((prev) => !prev);
+  };
+
+  const toggleSortModal = () => {
+    setIsFilterModalOpen(false);
+    setIsSortModalOpen((prev) => !prev);
   };
 
   const blockInvalidKeys = (e) => {
     if (e.key === "-" || e.key === "+" || e.key === "e") e.preventDefault();
   };
 
-  const handleFrom = (e) => setFilterFrom(e.target.value);
-  const handleTo = (e) => setFilterTo(e.target.value);
-
   const handleFilter = (e) => {
     e.preventDefault();
-    setLoading(true);
     fetchProducts(1, { price_from: filterFrom, price_to: filterTo });
     setIsFilterModalOpen(false);
+  };
+
+  const handleSort = (sortValue) => {
+    setSortBy(sortValue);
+    fetchProducts(1, { price_from: filterFrom, price_to: filterTo }, sortValue);
+    setIsSortModalOpen(false);
+  };
+
+  const clearSort = () => {
+    setSortBy("");
+    fetchProducts(1, { price_from: filterFrom, price_to: filterTo }, "");
+    setIsSortModalOpen(false);
   };
 
   const getFiltersFromUrl = () => {
@@ -83,13 +105,21 @@ function ProductsList() {
     params.delete("price_to");
     params.set("page", 1);
     window.history.replaceState(null, "", `?${params.toString()}`);
-    fetchProducts(1, { price_from: "", price_to: "" });
+    fetchProducts(1, { price_from: "", price_to: "" }, params.get("sort") || sortBy);
     setIsFilterModalOpen(false);
+    setIsSortModalOpen(false);
   };
 
   const filtersInUrl = () => {
     const { price_from, price_to } = getFiltersFromUrl();
     return price_from !== "" || price_to !== "";
+  };
+
+  const getSortLabel = () => {
+    if (sortBy === "created_at") return "New products first";
+    if (sortBy === "price") return "Price, low to high";
+    if (sortBy === "-price") return "Price, high to low";
+    return "Sort by";
   };
 
   return (
@@ -102,8 +132,8 @@ function ProductsList() {
             {products.meta.from || 0}–{products.meta.to || 0} of {products.meta.total || 0} results
           </p>
           <span className="line"></span>
-          <div className="filter" onClick={handleFilterClick}>
-            <div className="filterIcon">
+          <div className="filter" onClick={toggleFilterModal}>
+            <div className="filter-icon">
               <img src={filterIcon} alt="Filter" />
             </div>
             <p>Filter</p>
@@ -112,10 +142,10 @@ function ProductsList() {
               <div className="filter-controls">
                 <div className="inputs">
                   <label htmlFor="filter-from">
-                    <input id="filter-from" type="number" placeholder="From *" min="0" required value={filterFrom} onChange={handleFrom} onKeyDown={blockInvalidKeys} />
+                    <input id="filter-from" type="number" placeholder="From *" min="0" required value={filterFrom} onChange={(e) => setFilterFrom(e.target.value)} onKeyDown={blockInvalidKeys} />
                   </label>
                   <label htmlFor="filter-to">
-                    <input id="filter-to" type="number" placeholder="To *" min="0" required value={filterTo} onChange={handleTo} onKeyDown={blockInvalidKeys} />
+                    <input id="filter-to" type="number" placeholder="To *" min="0" required value={filterTo} onChange={(e) => setFilterTo(e.target.value)} onKeyDown={blockInvalidKeys} />
                   </label>
                 </div>
 
@@ -125,11 +155,31 @@ function ProductsList() {
               </div>
             </form>
           </div>
-          <div className="sort">
-            <p>Sort by</p>
-            <div>
-              <img src={arrow} alt="Sort" />
+          <div className="sort" onClick={toggleSortModal}>
+            <p>{getSortLabel()}</p>
+            <div className="sort-icon">
+              <img className="sort-arrow" src={arrow} alt="Sort" style={{ transform: isSortModalOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
             </div>
+
+            <form className="sort-modal" onClick={(e) => e.stopPropagation()} style={{ display: isSortModalOpen ? "flex" : "none" }}>
+              <h2>Sort by</h2>
+              <div className="sort-options">
+                <button type="button" onClick={() => handleSort("created_at")} className={sortBy === "created_at" ? "active" : ""} disabled={sortBy === "created_at"}>
+                  <p>New products first</p>
+                </button>
+                <button type="button" onClick={() => handleSort("price")} className={sortBy === "price" ? "active" : ""} disabled={sortBy === "price"}>
+                  <p>Price, low to high</p>
+                </button>
+                <button type="button" onClick={() => handleSort("-price")} className={sortBy === "-price" ? "active" : ""} disabled={sortBy === "-price"}>
+                  <p>Price, high to low</p>
+                </button>
+              </div>
+              {sortBy && (
+                <button className="clear-sort" type="button" onClick={clearSort}>
+                  <p>Clear Sort</p>
+                </button>
+              )}
+            </form>
           </div>
         </div>
       </header>

@@ -81,7 +81,7 @@ function Register() {
       });
   };
 
-  function RenderErrors({ errors }) {
+  const RenderErrors = ({ errors }) => {
     [...document.getElementsByClassName("error-msg")].forEach((el) => el.remove());
 
     const map = {
@@ -102,7 +102,7 @@ function Register() {
         label.appendChild(p);
       });
     });
-  }
+  };
 
   const handleAvatar = (e) => {
     if (avatar !== profile) URL.revokeObjectURL(avatar);

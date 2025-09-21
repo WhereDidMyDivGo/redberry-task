@@ -13,7 +13,7 @@ const schema = yup.object().shape({
   password: yup.string().required("The password field is required.").min(3, "Password must be at least 3 characters"),
 });
 
-function Login() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -136,6 +136,6 @@ function Login() {
       </div>
     </div>
   );
-}
+};
 
 export default Login;

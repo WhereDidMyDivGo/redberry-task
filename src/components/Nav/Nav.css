@@ -59,6 +59,7 @@ nav {
     justify-content: flex-end;
     align-items: center;
     gap: 20px;
+    user-select: none;
 
     .cartIcon {
       width: 20.892px;
@@ -82,10 +83,11 @@ nav {
         background: lightgray 50% / cover no-repeat;
       }
 
-      .arrow {
+      .nav-arrow {
         width: 10px;
         height: 5.75px;
         flex-shrink: 0;
+        cursor: pointer;
         transition: 0.3s;
       }
 

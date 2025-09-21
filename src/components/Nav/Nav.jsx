@@ -25,8 +25,6 @@ function Nav() {
 
   const handleToggle = () => {
     setShowLogout((v) => !v);
-    const arrowEl = document.querySelector(".arrow");
-    arrowEl.style.transform = !showLogout ? "rotate(180deg)" : "rotate(0deg)";
   };
 
   let content;
@@ -38,7 +36,7 @@ function Nav() {
         <img className="cartIcon" onClick={() => setCartOpen(true)} src={cartIcon} />
         <div>
           <img className="profileIcon" src={avatar || profileIcon} />
-          <img className="arrow" src={arrow} onClick={handleToggle} style={{ cursor: "pointer" }} />
+          <img className="nav-arrow" src={arrow} onClick={handleToggle} style={{ transform: showLogout ? "rotate(180deg)" : "rotate(0deg)" }} />
           {showLogout && (
             <button className="logout-button" onClick={handleLogout}>
               Log out
