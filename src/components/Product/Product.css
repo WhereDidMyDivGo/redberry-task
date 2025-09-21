@@ -252,7 +252,7 @@
     }
 
     .line {
-      width: 100%;
+      width: 704px;
       height: 1px;
       background: #e1dfe1;
     }
@@ -315,4 +315,84 @@
       }
     }
   }
+
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+    background: #f6f7f8;
+  }
+
+  .shimmer:before {
+    content: "";
+    position: absolute;
+    top: -60%;
+    left: -60%;
+    width: 220%;
+    height: 220%;
+    background: linear-gradient(120deg, rgba(246, 247, 248, 0.7) 0%, rgba(230, 230, 230, 0.9) 35%, rgba(255, 255, 255, 0.7) 50%, rgba(230, 230, 230, 0.9) 65%, rgba(246, 247, 248, 0.7) 100%);
+    animation: shimmer-diag 1.2s infinite;
+  }
+
+  .shimmer-mini-pic {
+    height: 161.333px;
+    aspect-ratio: 121/161.33;
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  .shimmer-main-pic {
+    width: 703px;
+    height: 937px;
+    border-radius: 10px;
+  }
+
+  .shimmer-color {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+  }
+
+  .shimmer-size {
+    width: 70px;
+    height: 45px;
+    border-radius: 10px;
+  }
+
+  .shimmer-name {
+    width: 60%;
+    height: 48px;
+    border-radius: 4px;
+  }
+
+  .shimmer-price {
+    width: 40%;
+    height: 48px;
+    border-radius: 4px;
+  }
+
+  .shimmer-details-img {
+    width: 109px;
+    height: 61px;
+    border-radius: 8px;
+  }
+
+  .shimmer-brand {
+    width: 40%;
+    height: 25px;
+    border-radius: 4px;
+  }
+
+  .shimmer-description {
+    width: 100%;
+    height: 50px;
+    border-radius: 4px;
+  }
 }
+
+
+@keyframes shimmer-diag {
+    100% {
+      top: 60%;
+      left: 60%;
+    }
+  }
