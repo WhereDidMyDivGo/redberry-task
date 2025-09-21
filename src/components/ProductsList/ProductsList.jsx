@@ -5,7 +5,7 @@ import arrow from "../../assets/arrow.svg";
 import xIcon from "../../assets/xIcon.svg";
 
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function ProductsList() {
   const location = useLocation();
@@ -206,13 +206,13 @@ function ProductsList() {
             ))
           : products.data &&
             products.data.map((product) => (
-              <div className="product" key={product.id}>
+              <Link to={`/product/${product.id}`} className="product" key={product.id}>
                 <img src={product.cover_image} alt={product.name} />
                 <div className="description">
                   <p className="name">{product.name}</p>
                   <p className="price">{product.price ? `$ ${product.price}` : ""}</p>
                 </div>
-              </div>
+              </Link>
             ))}
       </div>
 

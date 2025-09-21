@@ -4,7 +4,7 @@ import { useState } from "react";
 import Cart from "../Cart/Cart";
 
 import handEye from "../../assets/HandEye.svg";
-import cartIcon from "../../assets/cart.svg";
+import navCartIcon from "../../assets/navCartIcon.svg";
 import profileIcon from "../../assets/profile.svg";
 import arrow from "../../assets/arrow.svg";
 
@@ -33,9 +33,9 @@ function Nav() {
 
     content = (
       <div className="profile" style={{ position: "relative" }}>
-        <img className="cartIcon" onClick={() => setCartOpen(true)} src={cartIcon} />
+        <img className="cart-icon" onClick={() => setCartOpen(true)} src={navCartIcon} />
         <div>
-          <img className="profileIcon" src={avatar || profileIcon} />
+          <img className="profile-icon" src={avatar || profileIcon} />
           <img className="nav-arrow" src={arrow} onClick={handleToggle} style={{ transform: showLogout ? "rotate(180deg)" : "rotate(0deg)" }} />
           {showLogout && (
             <button className="logout-button" onClick={handleLogout}>

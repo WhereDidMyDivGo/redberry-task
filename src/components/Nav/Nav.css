@@ -61,7 +61,7 @@ nav {
     gap: 20px;
     user-select: none;
 
-    .cartIcon {
+    .cart-icon {
       width: 20.892px;
       height: 19.5px;
       flex-shrink: 0;
@@ -74,7 +74,7 @@ nav {
       gap: 9px;
       position: relative;
 
-      .profileIcon {
+      .profile-icon {
         width: 40px;
         height: 40px;
         aspect-ratio: 1/1;

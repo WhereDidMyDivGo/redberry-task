@@ -117,7 +117,7 @@ const Login = () => {
             <label htmlFor="login-password" className="password">
               <input id="login-password" autoComplete="current-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={password} onChange={(e) => setPassword(e.target.value)} />
               <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
-                <img className="eyeIcon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
+                <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>
             </label>
           </div>
