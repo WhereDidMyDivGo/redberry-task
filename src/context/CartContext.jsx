@@ -3,26 +3,44 @@ import { createContext, useContext, useState } from "react";
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const addProduct = (product) => {
-    setCart((prevCart) => [
-      ...prevCart,
-      {
-        ...product,
-        total_price: product.price * product.quantity,
-      },
-    ]);
-  };
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState([]);
   const [removingIds, setRemovingIds] = useState([]);
+  const [loadingIds, setLoadingIds] = useState(false);
 
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token="))
     ?.split("=")[1];
 
+  const addProduct = (product) => {
+    setCart((prevCart) => {
+      const idx = prevCart.findIndex((item) => item.id === product.id);
+      if (idx !== -1) {
+        const updated = [...prevCart];
+        const existing = updated[idx];
+        const newQuantity = existing.quantity + product.quantity;
+        updated[idx] = {
+          ...existing,
+          quantity: newQuantity,
+          total_price: existing.price * newQuantity,
+        };
+        return updated;
+      } else {
+        return [
+          ...prevCart,
+          {
+            ...product,
+            total_price: product.price * product.quantity,
+          },
+        ];
+      }
+    });
+  };
+
   const removeProduct = async (productId) => {
     setRemovingIds((ids) => [...ids, productId]);
+    setLoadingIds(true);
     try {
       const res = await fetch(`https://api.redseam.redberryinternship.ge/api/cart/products/${productId}`, {
         method: "DELETE",
@@ -33,6 +51,7 @@ export function CartProvider({ children }) {
       });
       if (res.ok) {
         setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+        setLoadingIds(false);
       }
     } catch (err) {
       console.log(err);
@@ -54,8 +73,9 @@ export function CartProvider({ children }) {
     let newQuantity = item.quantity;
     if (action === "increase") newQuantity = item.quantity + 1;
     if (action === "decrease" && item.quantity > 1) newQuantity = item.quantity - 1;
+    setLoadingIds(true);
     try {
-      await fetch(`https://api.redseam.redberryinternship.ge/api/cart/products/${productId}`, {
+      const res = await fetch(`https://api.redseam.redberryinternship.ge/api/cart/products/${productId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -64,12 +84,13 @@ export function CartProvider({ children }) {
         },
         body: JSON.stringify({ quantity: newQuantity }),
       });
+      if (res.ok) setLoadingIds(false);
     } catch (err) {
       console.log(err);
     }
   };
 
-  return <CartContext.Provider value={{ cartOpen, setCartOpen, cart, setCart, removeProduct, removingIds, changeQuantity, addProduct }}>{children}</CartContext.Provider>;
+  return <CartContext.Provider value={{ cartOpen, setCartOpen, cart, setCart, removeProduct, removingIds, changeQuantity, addProduct, loadingIds }}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {
