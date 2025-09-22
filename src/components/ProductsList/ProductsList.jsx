@@ -124,7 +124,7 @@ function ProductsList() {
 
   return (
     <div className="products-list">
-      <header>
+      <header className="product-list-header">
         <h1>Products</h1>
 
         <div className="controls">
@@ -185,7 +185,7 @@ function ProductsList() {
       </header>
 
       {filtersInUrl() && (
-        <div className="filters">
+        <div className="applied-filters">
           <p>{`Price: ${getFiltersFromUrl().price_from}-${getFiltersFromUrl().price_to}`}</p>
           <button className="clear-filters" onClick={clearFilters}>
             <img src={xIcon} alt="Clear filters" />

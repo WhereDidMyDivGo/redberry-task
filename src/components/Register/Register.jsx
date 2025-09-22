@@ -148,7 +148,7 @@ function Register() {
             <label htmlFor="register-confirm-password" className="confirm-password">
               <input id="register-confirm-password" autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password *" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
               <button className="toggle-password" type="button" onClick={() => setShowConfirmPassword((prev) => !prev)}>
-                <img className="eyeIcon" src={showConfirmPassword ? closedEyeIcon : eyeIcon} alt={showConfirmPassword ? "Hide password" : "Show password"} />
+                <img className="eye-icon" src={showConfirmPassword ? closedEyeIcon : eyeIcon} alt={showConfirmPassword ? "Hide password" : "Show password"} />
               </button>
             </label>
           </div>

@@ -2,14 +2,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 72px 100px 216px;
+  padding: 72px 0 216px;
   flex: 1;
 
-  header {
+  header.product-list-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    max-width: 1720px;
 
     h1 {
       color: var(--Dark-blue, #10151f);
@@ -258,6 +259,7 @@
               cursor: pointer;
               padding: 8px 16px;
               border-radius: 4px;
+              background: transparent;
 
               &.active {
                 p {
@@ -291,6 +293,7 @@
             border: none;
             outline: none;
             cursor: pointer;
+            background: transparent;
 
             p {
               color: var(--White, #fff);
@@ -306,7 +309,7 @@
     }
   }
 
-  .filters {
+  .applied-filters {
     display: inline-flex;
     padding: 8px 10px 8px 16px;
     justify-content: center;
@@ -315,7 +318,7 @@
     border-radius: 50px;
     border: 1px solid var(--Grey-2, #e1dfe1);
     align-self: flex-start;
-    margin: 19px 0 0 0;
+    margin: 19px 0 0 100px;
 
     p {
       color: var(--Dark-blue-2, #3e424a);
@@ -326,7 +329,7 @@
       line-height: normal;
     }
 
-    button {
+    .clear-filters {
       width: 12px;
       height: 12px;
       aspect-ratio: 1/1;
@@ -336,6 +339,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      background: transparent;
 
       img {
         width: 6.75px;
@@ -352,7 +356,8 @@
     align-content: flex-start;
     gap: 48px 24px;
     flex-wrap: wrap;
-    flex: 1;
+    width: 100%;
+    max-width: 1720px;
 
     &.includes-filters {
       margin: 26px 0 90px;
