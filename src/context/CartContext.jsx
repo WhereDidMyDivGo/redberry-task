@@ -15,7 +15,7 @@ export function CartProvider({ children }) {
 
   const addProduct = (product) => {
     setCart((prevCart) => {
-      const idx = prevCart.findIndex((item) => item.id === product.id);
+      const idx = prevCart.findIndex((item) => String(item.id) === String(product.id));
       if (idx !== -1) {
         const updated = [...prevCart];
         const existing = updated[idx];
