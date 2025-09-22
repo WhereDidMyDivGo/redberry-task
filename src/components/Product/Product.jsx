@@ -19,7 +19,7 @@ function Product() {
   const [colorInvalid, setColorInvalid] = useState(false);
   const [sizeInvalid, setSizeInvalid] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setCartOpen } = useCart();
+  const { setCartOpen, addProduct } = useCart();
 
   useEffect(() => {
     fetch(`https://api.redseam.redberryinternship.ge/api/products/${id}`)
@@ -53,6 +53,16 @@ function Product() {
       setTimeout(() => setShake(false), 400);
       return;
     }
+
+    addProduct({
+      id,
+      name: product.name,
+      price: product.price,
+      cover_image: product.cover_image,
+      color: selectedColor,
+      size: selectedSize,
+      quantity,
+    });
 
     setLoading(true);
     const cartData = new FormData();
