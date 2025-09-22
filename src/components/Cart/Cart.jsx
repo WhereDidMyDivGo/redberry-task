@@ -4,7 +4,7 @@ import xIcon from "../../assets/xIcon.svg";
 import emptyCart from "../../assets/emptyCart.svg";
 
 import { useCart } from "../../context/CartContext";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Cart({ onClose }) {
@@ -12,13 +12,21 @@ function Cart({ onClose }) {
   const subtotal = cart.reduce((sum, item) => sum + item.total_price, 0);
   const total = subtotal === 0 ? 0 : subtotal + 5;
   const [loading, setLoading] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 500);
+  };
 
   return (
-    <div className="cart" onClick={onClose}>
-      <div className="cart-content" onClick={(e) => e.stopPropagation()}>
+    <div className={`cart${isClosing ? " closing" : ""}`} onClick={handleClose}>
+      <div className={`cart-content${isClosing ? " closing" : ""}`} onClick={(e) => e.stopPropagation()}>
         <header className="cart-header">
           <h1>Shopping cart ({cart.length})</h1>
-          <button type="button" className="close-cart" onClick={onClose}>
+          <button type="button" className="close-cart" onClick={handleClose}>
             <img src={xIcon} />
           </button>
         </header>

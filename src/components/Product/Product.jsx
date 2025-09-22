@@ -86,7 +86,6 @@ function Product() {
       .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
       .then(({ ok, data }) => {
         setLoading(false);
-        console.log(data);
         if (ok) setCartOpen(true);
       })
       .catch((err) => {

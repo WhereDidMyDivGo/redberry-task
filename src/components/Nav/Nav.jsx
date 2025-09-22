@@ -10,11 +10,15 @@ import profileIcon from "../../assets/profile.svg";
 import arrow from "../../assets/arrow.svg";
 
 function Nav() {
-  const { cartOpen, setCartOpen } = useCart();
+  const { cartOpen, setCartOpen } = useCart(false);
   const [showLogout, setShowLogout] = useState(false);
+  const [showCart, setShowCart] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = cartOpen ? "hidden" : "auto";
+    if (cartOpen) {
+      setShowCart(true);
+    }
   }, [cartOpen]);
 
   const token = document.cookie
@@ -32,13 +36,27 @@ function Nav() {
     setShowLogout((v) => !v);
   };
 
+  const handleCartClose = () => {
+    setCartOpen(false);
+    setTimeout(() => {
+      setShowCart(false);
+    }, 500);
+  };
+
   let content;
   if (token) {
     const avatar = localStorage.getItem("avatar");
 
     content = (
       <div className="profile" style={{ position: "relative" }}>
-        <img className="cart-icon" onClick={() => setCartOpen(true)} src={navCartIcon} />
+        <img
+          className="cart-icon"
+          onClick={() => {
+            setCartOpen(true);
+            setShowCart(true);
+          }}
+          src={navCartIcon}
+        />
         <div>
           <img className="profile-icon" src={avatar || profileIcon} />
           <img className="nav-arrow" src={arrow} onClick={handleToggle} style={{ transform: showLogout ? "rotate(180deg)" : "rotate(0deg)" }} />
@@ -66,7 +84,7 @@ function Nav() {
         <p>RedSeam Clothing</p>
       </Link>
       {content}
-      {cartOpen && <Cart onClose={() => setCartOpen(false)} />}
+      {showCart && <Cart onClose={handleCartClose} />}
     </nav>
   );
 }

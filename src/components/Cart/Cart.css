@@ -3,11 +3,16 @@
   top: 0;
   left: 0;
   z-index: 2;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0);
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: flex-end;
+  animation: fadeIn 1.5s forwards;
+
+  &.closing {
+    animation: fadeOut 1.5s forwards;
+  }
 
   .cart-content {
     width: 540px;
@@ -18,6 +23,12 @@
     display: flex;
     flex-direction: column;
     gap: 63px;
+    clip-path: inset(0 0 0 100%);
+    animation: slideIn 0.5s 0.5s forwards;
+
+    &.closing {
+      animation: slideOut 0.5s forwards;
+    }
 
     header.cart-header {
       display: flex;
@@ -314,5 +325,41 @@
         }
       }
     }
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    clip-path: inset(0 0 0 100%);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0);
   }
 }

@@ -293,7 +293,6 @@
             border: none;
             outline: none;
             cursor: pointer;
-            background: transparent;
 
             p {
               color: var(--White, #fff);
@@ -349,7 +348,7 @@
     }
   }
 
-  .products {
+.products {
     margin: 32px 0 90px;
     display: flex;
     align-items: flex-start;
