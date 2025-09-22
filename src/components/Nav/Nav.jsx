@@ -1,6 +1,6 @@
 import "./Nav.css";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import Cart from "../Cart/Cart";
 
@@ -12,6 +12,10 @@ import arrow from "../../assets/arrow.svg";
 function Nav() {
   const { cartOpen, setCartOpen } = useCart();
   const [showLogout, setShowLogout] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = cartOpen ? "hidden" : "auto";
+  }, [cartOpen]);
 
   const token = document.cookie
     .split("; ")

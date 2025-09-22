@@ -13,7 +13,7 @@
   box-sizing: border-box;
 }
 
-body {
+html {
   scrollbar-gutter: stable;
 }
 
