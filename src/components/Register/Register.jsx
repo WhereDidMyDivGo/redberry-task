@@ -137,7 +137,7 @@ function Register() {
             <label htmlFor="register-password" className="password">
               <input id="register-password" autoComplete="new-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={password} onChange={(e) => setPassword(e.target.value)} />
               <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
-                <img className="eyeIcon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
+                <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>
               {errors.password &&
                 errors.password.map((msg, idx) => (
