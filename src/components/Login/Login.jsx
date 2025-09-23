@@ -5,6 +5,7 @@ import eyeIcon from "../../assets/eyeIcon.svg";
 import closedEyeIcon from "../../assets/closedEyeIcon.svg";
 
 import { useRef, useState } from "react";
+import useCookie from "react-use-cookie";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
 
@@ -14,6 +15,7 @@ const schema = yup.object().shape({
 });
 
 const Login = () => {
+  const [token, setToken] = useCookie("token");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -71,7 +73,7 @@ const Login = () => {
           return;
         }
         setLoading(false);
-        document.cookie = `token=${data.token}; path=/; SameSite=Strict`;
+        setToken(data.token, { path: "/", sameSite: "Strict" });
         if (data.errors) RenderErrors({ errors: data.errors });
         if (data.user && data.user.avatar) localStorage.setItem("avatar", data.user.avatar);
         if (ok) window.location.href = "/productsList";

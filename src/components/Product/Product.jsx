@@ -1,5 +1,6 @@
 import "./Product.css";
 import { useEffect, useState, useRef } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import { useParams } from "react-router-dom";
 
@@ -8,15 +9,13 @@ import cartIcon from "../../assets/cartIcon.svg";
 import { string } from "yup";
 
 function Product() {
+  const { token } = useAuth();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(null);
-  const colorsRef = useRef(null);
-  const sizesRef = useRef(null);
-  const submitRef = useRef(null);
   const [shake, setShake] = useState(false);
   const [colorInvalid, setColorInvalid] = useState(false);
   const [sizeInvalid, setSizeInvalid] = useState(false);
@@ -75,12 +74,7 @@ function Product() {
       method: "POST",
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${
-          document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1]
-        }`,
+        Authorization: `Bearer ${token}`,
       },
       body: cartData,
     })
@@ -126,7 +120,7 @@ function Product() {
           </header>
 
           <div className="options">
-            <div className={`colors ${colorInvalid ? "invalid" : ""}`} ref={colorsRef}>
+            <div className={`colors ${colorInvalid ? "invalid" : ""}`}>
               <p>Color: {selectedColor ? selectedColor : "Select color"}</p>
               <div className="available-colors">
                 {product && product.available_colors
@@ -139,7 +133,7 @@ function Product() {
               </div>
             </div>
 
-            <div className={`sizes ${sizeInvalid ? "invalid" : ""}`} ref={sizesRef}>
+            <div className={`sizes ${sizeInvalid ? "invalid" : ""}`}>
               <p>Size: {selectedSize ? selectedSize : "Select size"}</p>
               <div className="available-sizes">
                 {product && product.available_sizes
@@ -164,7 +158,7 @@ function Product() {
             </div>
           </div>
 
-          <button className={`submit ${shake ? "shake" : ""}`} type="submit" disabled={product === null || loading} ref={submitRef} style={{ opacity: loading ? 0.6 : 1 }}>
+          <button className={`submit ${shake ? "shake" : ""}`} type="submit" disabled={product === null || loading} style={{ opacity: loading ? 0.6 : 1 }}>
             <img src={cartIcon} />
             <p>Add to cart</p>
           </button>

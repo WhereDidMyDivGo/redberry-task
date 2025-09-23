@@ -4,24 +4,21 @@ import { Routes, Route } from "react-router-dom";
 import Nav from "./components/Nav/Nav";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
-import Success from "./components/Success/Success";
+import Checkout from "./components/checkout/checkout";
 import Product from "./components/Product/Product";
 import ProductsList from "./components/ProductsList/ProductsList";
 
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useCart } from "./context/CartContext";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
   const navigate = useNavigate();
   const { setCart } = useCart();
+  const { token } = useAuth();
 
   useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-
     if (token) {
       fetch("https://api.redseam.redberryinternship.ge/api/cart", {
         method: "GET",
@@ -38,20 +35,18 @@ function App() {
           console.log(err);
         });
     }
-
-    if (window.location.pathname === "/") {
-      navigate("/productsList");
-    }
-  }, [navigate]);
+  }, [navigate, token]);
 
   return (
     <main>
       <Nav />
       <Routes>
+        <Route path="/" element={<Navigate to="/productsList" replace />} />
         <Route path="/productsList" element={<ProductsList />} />
         <Route path="/product/:id" element={<Product />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
     </main>
   );

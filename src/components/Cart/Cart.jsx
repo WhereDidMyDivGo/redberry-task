@@ -5,9 +5,10 @@ import emptyCart from "../../assets/emptyCart.svg";
 
 import { useCart } from "../../context/CartContext";
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Cart({ onClose }) {
+  const nav = useNavigate();
   const { cart, removeProduct, removingIds, changeQuantity, loadingIds } = useCart();
   const subtotal = cart.reduce((sum, item) => sum + item.total_price, 0);
   const total = subtotal === 0 ? 0 : subtotal + 5;
@@ -55,9 +56,15 @@ function Cart({ onClose }) {
     prevCartTotal.current = total;
   }, [total]);
 
+  const handleCheckout = (e) => {
+    e.preventDefault();
+    handleClose();
+    nav("/checkout");
+  };
+
   return (
     <div className={`cart${isClosing ? " closing" : ""}`} onClick={handleClose}>
-      <div className={`cart-content${isClosing ? " closing" : ""}`} onClick={(e) => e.stopPropagation()}>
+      <form onSubmit={handleCheckout} className={`cart-content${isClosing ? " closing" : ""}`} onClick={(e) => e.stopPropagation()}>
         <header className="cart-header">
           <h1>Shopping cart ({cart.length})</h1>
           <button type="button" className="close-cart" onClick={handleClose}>
@@ -119,7 +126,7 @@ function Cart({ onClose }) {
                   <p ref={cartTotalRef}>$ {total}</p>
                 </div>
               </div>
-              <button type="submit" className="checkout" disabled={loading || loadingIds} style={{ opacity: loading || loadingIds ? 0.6 : 1 }}>
+              <button type="submit" className="submit" disabled={loading || loadingIds} style={{ opacity: loading || loadingIds ? 0.6 : 1 }}>
                 <p>Go to checkout</p>
               </button>
             </footer>
@@ -129,12 +136,12 @@ function Cart({ onClose }) {
             <img src={emptyCart} />
             <h1>Ooops!</h1>
             <h2>You’ve got nothing in your cart just yet...</h2>
-            <Link to={"/productsList"} onClick={onClose}>
+            <Link to={"/productsList"} onClick={handleClose}>
               <p>Start shopping</p>
             </Link>
           </div>
         )}
-      </div>
+      </form>
     </div>
   );
 }

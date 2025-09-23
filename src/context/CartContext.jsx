@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
@@ -8,10 +9,7 @@ export function CartProvider({ children }) {
   const [removingIds, setRemovingIds] = useState([]);
   const [loadingIds, setLoadingIds] = useState(false);
 
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("token="))
-    ?.split("=")[1];
+  const { token } = useAuth();
 
   const addProduct = (product) => {
     setCart((prevCart) => {

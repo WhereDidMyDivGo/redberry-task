@@ -1,5 +1,5 @@
 .cart {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 2;
@@ -245,7 +245,7 @@
         }
       }
 
-      .checkout {
+      .submit {
         display: flex;
         width: 460px;
         padding: 16px 60px;

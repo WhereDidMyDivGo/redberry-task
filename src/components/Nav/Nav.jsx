@@ -2,6 +2,7 @@ import "./Nav.css";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 import Cart from "../Cart/Cart";
 
 import handEye from "../../assets/HandEye.svg";
@@ -21,10 +22,7 @@ function Nav() {
     }
   }, [cartOpen]);
 
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("token="))
-    ?.split("=")[1];
+  const { token } = useAuth();
 
   const handleLogout = () => {
     localStorage.removeItem("avatar");
