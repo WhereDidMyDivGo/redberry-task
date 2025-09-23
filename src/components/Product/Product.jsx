@@ -13,6 +13,7 @@ function Product() {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [mainImage, setMainImage] = useState(null);
   const colorsRef = useRef(null);
   const sizesRef = useRef(null);
   const submitRef = useRef(null);
@@ -27,6 +28,7 @@ function Product() {
       .then((res) => res.json())
       .then((data) => {
         setProduct(data);
+        setMainImage(data.cover_image);
       })
       .catch((err) => console.error(err));
   }, [id]);
@@ -40,7 +42,7 @@ function Product() {
       invalid = true;
       setTimeout(() => setColorInvalid(false), 1500);
     }
-    
+
     if (!selectedSize) {
       setSizeInvalid(true);
       invalid = true;
@@ -97,8 +99,25 @@ function Product() {
       <p className="page-title">Listing / Product</p>
       <form className="product-content" onSubmit={(e) => addToCart(e)}>
         <div className="pictures">
-          <div className="mini-pics-list">{product && product.images ? product.images.map((img, idx) => <img key={idx} className="mini-pic" src={img} />) : Array.from({ length: 5 }).map((_, idx) => <div key={idx} className="shimmer shimmer-mini-pic" />)}</div>
-          {product && product.cover_image ? <img className="main-pic" src={product.cover_image} alt={product.name} /> : <div className="shimmer shimmer-main-pic" />}
+          <div className="mini-pics-list">
+            {product && product.images
+              ? product.images.map((img, idx) => (
+                  <img
+                    key={idx}
+                    className="mini-pic"
+                    src={img}
+                    alt={`mini-${idx}`}
+                    onClick={() => {
+                      if (mainImage !== img) {
+                        setMainImage(img);
+                      }
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
+                ))
+              : Array.from({ length: 5 }).map((_, idx) => <div key={idx} className="shimmer shimmer-mini-pic" />)}
+          </div>
+          {mainImage ? <img className="main-pic" src={mainImage} alt={product ? product.name : "main"} /> : <div className="shimmer shimmer-main-pic" />}
         </div>
         <div className="info">
           <header className="info-header">
