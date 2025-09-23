@@ -7,7 +7,7 @@ export function CartProvider({ children }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState([]);
   const [removingIds, setRemovingIds] = useState([]);
-  const [loadingIds, setLoadingIds] = useState(false);
+  const [loadingIds, setLoadingIds] = useState([]);
 
   const { token } = useAuth();
 
@@ -38,7 +38,7 @@ export function CartProvider({ children }) {
 
   const removeProduct = async (productId) => {
     setRemovingIds((ids) => [...ids, productId]);
-    setLoadingIds(true);
+    setLoadingIds((ids) => [...ids, productId]);
     try {
       const res = await fetch(`https://api.redseam.redberryinternship.ge/api/cart/products/${productId}`, {
         method: "DELETE",
@@ -49,7 +49,7 @@ export function CartProvider({ children }) {
       });
       if (res.ok) {
         setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
-        setLoadingIds(false);
+        setLoadingIds((ids) => ids.filter((id) => id !== productId));
       }
     } catch (err) {
       console.log(err);
@@ -59,19 +59,22 @@ export function CartProvider({ children }) {
   };
 
   const changeQuantity = async (productId, action) => {
-    setCart((prevCart) =>
-      prevCart.map((item) => {
+    let newQuantity = 1;
+    setCart((prevCart) => {
+      const item = prevCart.find((i) => i.id === productId);
+      if (item) {
+        newQuantity = item.quantity;
+        if (action === "increase") newQuantity = item.quantity + 1;
+        if (action === "decrease" && item.quantity > 1) newQuantity = item.quantity - 1;
+      }
+      return prevCart.map((item) => {
         if (item.id !== productId) return item;
         if (action === "increase") return { ...item, quantity: item.quantity + 1, total_price: (item.total_price / item.quantity) * (item.quantity + 1) };
         if (action === "decrease" && item.quantity > 1) return { ...item, quantity: item.quantity - 1, total_price: (item.total_price / item.quantity) * (item.quantity - 1) };
         return item;
-      })
-    );
-    const item = cart.find((i) => i.id === productId);
-    let newQuantity = item.quantity;
-    if (action === "increase") newQuantity = item.quantity + 1;
-    if (action === "decrease" && item.quantity > 1) newQuantity = item.quantity - 1;
-    setLoadingIds(true);
+      });
+    });
+    setLoadingIds((ids) => [...ids, productId]);
     try {
       const res = await fetch(`https://api.redseam.redberryinternship.ge/api/cart/products/${productId}`, {
         method: "PATCH",
@@ -82,9 +85,10 @@ export function CartProvider({ children }) {
         },
         body: JSON.stringify({ quantity: newQuantity }),
       });
-      if (res.ok) setLoadingIds(false);
+      setLoadingIds((ids) => ids.filter((id) => id !== productId));
     } catch (err) {
       console.log(err);
+      setLoadingIds((ids) => ids.filter((id) => id !== productId));
     }
   };
 

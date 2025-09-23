@@ -4,9 +4,10 @@ import hero from "../../assets/hero.png";
 import eyeIcon from "../../assets/eyeIcon.svg";
 import closedEyeIcon from "../../assets/closedEyeIcon.svg";
 
-import { useRef, useState } from "react";
-import useCookie from "react-use-cookie";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -15,11 +16,13 @@ const schema = yup.object().shape({
 });
 
 const Login = () => {
-  const [token, setToken] = useCookie("token");
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleValidation = async () => {
     try {
@@ -44,7 +47,7 @@ const Login = () => {
 
     const validation = await handleValidation();
     if (validation) {
-      RenderErrors(validation);
+      setErrors(validation.errors || {});
       setLoading(false);
       return;
     }
@@ -63,50 +66,28 @@ const Login = () => {
       .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
       .then(({ ok, data }) => {
         if (data.message === "Unauthenticated.") {
-          RenderErrors({
-            errors: {
-              email: ["Incorrect email or password."],
-              password: ["Incorrect email or password."],
-            },
+          setErrors({
+            email: ["Incorrect email or password."],
+            password: ["Incorrect email or password."],
           });
           setLoading(false);
           return;
         }
         setLoading(false);
-        setToken(data.token, { path: "/", sameSite: "Strict" });
-        if (data.errors) RenderErrors({ errors: data.errors });
+        login(data);
+        if (data.errors) setErrors(data.errors);
         if (data.user && data.user.avatar) localStorage.setItem("avatar", data.user.avatar);
-        if (ok) window.location.href = "/productsList";
+        if (ok) navigate("/productsList");
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.message || "Login failed.");
         setLoading(false);
       });
   };
 
-  function RenderErrors({ errors }) {
-    [...document.getElementsByClassName("error-msg")].forEach((el) => el.remove());
-
-    const map = {
-      email: "email",
-      password: "password",
-    };
-
-    Object.entries(map).forEach(([key, id]) => {
-      const msg = errors[key];
-      const labels = document.getElementsByClassName(id);
-
-      [...labels].forEach((label) => {
-        const p = document.createElement("p");
-        p.className = "error-msg";
-        p.textContent = Array.isArray(msg) ? msg : msg;
-        label.appendChild(p);
-      });
-    });
-  }
-
   return (
     <div className="login">
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
       <img className="hero" src={hero} />
 
       <div className="form-wrapper">
@@ -115,12 +96,24 @@ const Login = () => {
           <div className="inputs">
             <label htmlFor="login-email" className="email">
               <input id="login-email" autoComplete="email" type="email" placeholder="Email or username *" value={email} onChange={(e) => setEmail(e.target.value)} />
+              {errors.email &&
+                errors.email.map((msg, idx) => (
+                  <p className="error-msg" key={idx}>
+                    {msg}
+                  </p>
+                ))}
             </label>
             <label htmlFor="login-password" className="password">
               <input id="login-password" autoComplete="current-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={password} onChange={(e) => setPassword(e.target.value)} />
               <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
                 <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>
+              {errors.password &&
+                errors.password.map((msg, idx) => (
+                  <p className="error-msg" key={idx}>
+                    {msg}
+                  </p>
+                ))}
             </label>
           </div>
 

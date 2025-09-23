@@ -5,9 +5,10 @@ import eyeIcon from "../../assets/eyeIcon.svg";
 import closedEyeIcon from "../../assets/closedEyeIcon.svg";
 import profile from "../../assets/profile.svg";
 
-import { useRef, useState } from "react";
-import useCookie from "react-use-cookie";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -18,7 +19,7 @@ const schema = yup.object().shape({
 });
 
 function Register() {
-  const [token, setToken] = useCookie("token");
+  const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,6 +29,8 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleValidation = async () => {
     try {
@@ -52,7 +55,7 @@ function Register() {
 
     const validation = await handleValidation();
     if (validation) {
-      RenderErrors(validation);
+      setErrors(validation.errors || {});
       setLoading(false);
       return;
     }
@@ -72,38 +75,15 @@ function Register() {
       .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
       .then(({ ok, data }) => {
         setLoading(false);
-        setToken(data.token, { path: "/", sameSite: "Strict" });
-        if (data.errors) RenderErrors({ errors: data.errors });
+        login(data);
+        if (data.errors) setErrors(data.errors);
         if (data.user.avatar) localStorage.setItem("avatar", data.user.avatar);
-        if (ok) window.location.href = "/productsList";
+        if (ok) navigate("/productsList");
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.message || "Registration failed.");
         setLoading(false);
       });
-  };
-
-  const RenderErrors = ({ errors }) => {
-    [...document.getElementsByClassName("error-msg")].forEach((el) => el.remove());
-
-    const map = {
-      username: "username",
-      email: "email",
-      password: "password",
-      confirmPassword: "confirm-password",
-    };
-
-    Object.entries(map).forEach(([key, id]) => {
-      const msg = errors[key];
-      const labels = document.getElementsByClassName(id);
-
-      [...labels].forEach((label) => {
-        const p = document.createElement("p");
-        p.className = "error-msg";
-        p.textContent = Array.isArray(msg) ? msg : msg;
-        label.appendChild(p);
-      });
-    });
   };
 
   const handleAvatar = (e) => {
@@ -120,6 +100,7 @@ function Register() {
 
   return (
     <div className="register">
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
       <img className="hero" src={hero} />
 
       <div className="form-wrapper">
@@ -137,21 +118,45 @@ function Register() {
           <div className="inputs">
             <label htmlFor="register-username" className="username">
               <input id="register-username" type="text" placeholder="Username *" value={username} onChange={(e) => setUsername(e.target.value)} />
+              {errors.username &&
+                errors.username.map((msg, idx) => (
+                  <p className="error-msg" key={idx}>
+                    {msg}
+                  </p>
+                ))}
             </label>
             <label htmlFor="register-email" className="email">
               <input id="register-email" autoComplete="email" type="email" placeholder="Email *" value={email} onChange={(e) => setEmail(e.target.value)} />
+              {errors.email &&
+                errors.email.map((msg, idx) => (
+                  <p className="error-msg" key={idx}>
+                    {msg}
+                  </p>
+                ))}
             </label>
             <label htmlFor="register-password" className="password">
               <input id="register-password" autoComplete="new-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={password} onChange={(e) => setPassword(e.target.value)} />
               <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
                 <img className="eyeIcon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>
+              {errors.password &&
+                errors.password.map((msg, idx) => (
+                  <p className="error-msg" key={idx}>
+                    {msg}
+                  </p>
+                ))}
             </label>
             <label htmlFor="register-confirm-password" className="confirm-password">
               <input id="register-confirm-password" autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password *" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
               <button className="toggle-password" type="button" onClick={() => setShowConfirmPassword((prev) => !prev)}>
                 <img className="eye-icon" src={showConfirmPassword ? closedEyeIcon : eyeIcon} alt={showConfirmPassword ? "Hide password" : "Show password"} />
               </button>
+              {errors.confirmPassword &&
+                errors.confirmPassword.map((msg, idx) => (
+                  <p className="error-msg" key={idx}>
+                    {msg}
+                  </p>
+                ))}
             </label>
           </div>
 

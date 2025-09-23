@@ -5,9 +5,11 @@ import arrow from "../../assets/arrow.svg";
 import xIcon from "../../assets/xIcon.svg";
 
 import { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { Link, useLocation } from "react-router-dom";
 
 function ProductsList() {
+  const [shouldScroll, setShouldScroll] = useState(false);
   const location = useLocation();
   const [products, setProducts] = useState({ data: [], meta: {}, links: {} });
   const [loading, setLoading] = useState(false);
@@ -37,11 +39,20 @@ function ProductsList() {
       method: "GET",
       headers: { Accept: "application/json" },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((data) => {
+            throw new Error(data?.message || "Failed to fetch products.");
+          });
+        }
+        return res.json();
+      })
       .then((data) => {
         setProducts(data);
       })
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        toast.error(err.message || "Failed to fetch products.");
+      })
       .finally(() => setLoading(false));
   };
 
@@ -122,8 +133,50 @@ function ProductsList() {
     return "Sort by";
   };
 
+  const getPaginationButtons = (current, total, onPageClick) => {
+    const pages = [];
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === 2 || i === total || i === total - 1 || Math.abs(i - current) <= 1) {
+        pages.push(i);
+      }
+    }
+    const uniquePages = Array.from(new Set(pages)).sort((a, b) => a - b);
+    let last = 0;
+    const buttons = [];
+
+    const handlePageClick = (page) => {
+      setShouldScroll(true);
+      onPageClick(page);
+    };
+
+    useEffect(() => {
+      if (shouldScroll) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        setShouldScroll(false);
+      }
+    }, [products.data]);
+
+    uniquePages.forEach((page) => {
+      if (page - last > 1) {
+        buttons.push(
+          <button key={`ellipsis-${page}-${last}`} disabled>
+            <p>...</p>
+          </button>
+        );
+      }
+      buttons.push(
+        <button key={page} className={page === current ? "active" : ""} onClick={() => handlePageClick(page)} disabled={page === current}>
+          <p>{page}</p>
+        </button>
+      );
+      last = page;
+    });
+    return buttons;
+  };
+
   return (
     <div className="products-list">
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
       <header className="product-list-header">
         <h1>Products</h1>
 
@@ -226,37 +279,7 @@ function ProductsList() {
         >
           <img src={arrow} alt="Previous" />
         </button>
-
-        {(() => {
-          const total = products.meta.last_page || 1;
-          const current = products.meta.current_page || 1;
-          const pages = [];
-          for (let i = 1; i <= total; i++) {
-            if (i === 1 || i === 2 || i === total || i === total - 1 || Math.abs(i - current) <= 1) {
-              pages.push(i);
-            }
-          }
-          const uniquePages = Array.from(new Set(pages)).sort((a, b) => a - b);
-          let last = 0;
-          const pageButtons = [];
-          uniquePages.forEach((page, idx) => {
-            if (page - last > 1) {
-              pageButtons.push(
-                <button key={"ellipsis-" + page + "-" + last} disabled style={{}}>
-                  <p>...</p>
-                </button>
-              );
-            }
-            pageButtons.push(
-              <button key={page} className={page === current ? "active" : ""} onClick={() => fetchProducts(page, getFiltersFromUrl())} disabled={page === current}>
-                <p>{page}</p>
-              </button>
-            );
-            last = page;
-          });
-          return pageButtons;
-        })()}
-
+        {getPaginationButtons(products.meta.current_page || 1, products.meta.last_page || 1, (page) => fetchProducts(page, getFiltersFromUrl()))}
         <button
           className="next"
           onClick={() => {

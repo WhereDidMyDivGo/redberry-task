@@ -12,7 +12,6 @@ function Cart({ onClose }) {
   const { cart, removeProduct, removingIds, changeQuantity, loadingIds } = useCart();
   const subtotal = cart.reduce((sum, item) => sum + item.total_price, 0);
   const total = subtotal === 0 ? 0 : subtotal + 5;
-  const [loading, setLoading] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const prevTotals = useRef({});
   const prevCartTotal = useRef(total);
@@ -126,7 +125,7 @@ function Cart({ onClose }) {
                   <p ref={cartTotalRef}>$ {total}</p>
                 </div>
               </div>
-              <button type="submit" className="submit" disabled={loading || loadingIds} style={{ opacity: loading || loadingIds ? 0.6 : 1 }}>
+              <button type="submit" className="submit" disabled={loadingIds.length > 0} style={{ opacity: loadingIds.length > 0 ? 0.6 : 1 }}>
                 <p>Go to checkout</p>
               </button>
             </footer>

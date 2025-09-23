@@ -1,12 +1,12 @@
 import "./Product.css";
+
 import { useEffect, useState, useRef } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import { useParams, useNavigate } from "react-router-dom";
 
-import arrow from "../../assets/arrow.svg";
 import cartIcon from "../../assets/cartIcon.svg";
-import { string } from "yup";
 
 function Product() {
   const { token } = useAuth();
@@ -25,12 +25,21 @@ function Product() {
 
   useEffect(() => {
     fetch(`https://api.redseam.redberryinternship.ge/api/products/${id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((data) => {
+            throw new Error(data?.message || "Failed to fetch product.");
+          });
+        }
+        return res.json();
+      })
       .then((data) => {
         setProduct(data);
         setMainImage(data.cover_image);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        toast.error(err.message || "Failed to fetch product.");
+      });
   }, [id]);
 
   const addToCart = (e) => {
@@ -59,16 +68,6 @@ function Product() {
       return;
     }
 
-    addProduct({
-      id,
-      name: product.name,
-      price: product.price,
-      cover_image: product.cover_image,
-      color: selectedColor,
-      size: selectedSize,
-      quantity,
-    });
-
     setLoading(true);
     const cartData = new FormData();
     cartData.append("quantity", quantity);
@@ -84,17 +83,32 @@ function Product() {
       body: cartData,
     })
       .then((res) => {
+        if (!res.ok) {
+          return res.json().then((data) => {
+            throw new Error(data?.message || "Failed to add to cart.");
+          });
+        }
+        setCartOpen(true);
+        addProduct({
+          id,
+          name: product.name,
+          price: product.price,
+          cover_image: product.cover_image,
+          color: selectedColor,
+          size: selectedSize,
+          quantity,
+        });
         setLoading(false);
-        if (res.ok) setCartOpen(true);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.message || "Failed to add to cart.");
         setLoading(false);
       });
   };
 
   return (
     <div className="product-container">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={true} />
       <p className="page-title">Listing / Product</p>
       <form className="product-content" onSubmit={(e) => addToCart(e)}>
         <div className="pictures">

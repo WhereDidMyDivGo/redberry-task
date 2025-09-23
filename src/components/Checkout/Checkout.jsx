@@ -6,7 +6,7 @@ import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import Success from "../Success/Success";
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 function Checkout() {
   const { token } = useAuth();
@@ -73,22 +73,25 @@ function Checkout() {
       },
       body: cartData,
     })
-      .then((res) => res.json().then(() => ({ ok: res.ok })))
-      .then(({ ok }) => {
+      .then((res) => {
         setSubmitting(false);
-        if (ok) {
+        return res.json().then((data) => {
+          if (!res.ok) {
+            throw new Error(data?.message || "Checkout failed.");
+          }
           setCart([]);
           setShowSuccessModal(true);
-        }
+        });
       })
       .catch((err) => {
         setSubmitting(false);
-        console.log(err);
+        toast.error(err.message || "Checkout failed.");
       });
   };
 
   return (
     <div className="checkout">
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
       <h1 className="page-title">Checkout</h1>
 
       <div className="checkout-content">
@@ -172,7 +175,7 @@ function Checkout() {
             </div>
           </div>
 
-          <button type="submit" className="submit" form="checkout-form" disabled={submitting || loadingIds || cart.length === 0} style={{ opacity: submitting || loadingIds || cart.length === 0 ? 0.6 : 1 }}>
+          <button type="submit" className="submit" form="checkout-form" disabled={submitting || loadingIds.length > 0 || cart.length === 0} style={{ opacity: submitting || loadingIds.length > 0 || cart.length === 0 ? 0.6 : 1 }}>
             <p>Go to checkout</p>
           </button>
         </div>

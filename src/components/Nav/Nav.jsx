@@ -1,4 +1,5 @@
 import "./Nav.css";
+
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
@@ -11,9 +12,10 @@ import profileIcon from "../../assets/profile.svg";
 import arrow from "../../assets/arrow.svg";
 
 function Nav() {
-  const { cartOpen, setCartOpen } = useCart(false);
+  const { cartOpen, setCartOpen } = useCart();
   const [showLogout, setShowLogout] = useState(false);
   const [showCart, setShowCart] = useState(false);
+  const { token, logout } = useAuth();
 
   useEffect(() => {
     document.body.style.overflow = cartOpen ? "hidden" : "auto";
@@ -21,14 +23,6 @@ function Nav() {
       setShowCart(true);
     }
   }, [cartOpen]);
-
-  const { token } = useAuth();
-
-  const handleLogout = () => {
-    localStorage.removeItem("avatar");
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.reload();
-  };
 
   const handleToggle = () => {
     setShowLogout((v) => !v);
@@ -44,7 +38,6 @@ function Nav() {
   let content;
   if (token) {
     const avatar = localStorage.getItem("avatar");
-
     content = (
       <div className="profile" style={{ position: "relative" }}>
         <img
@@ -59,7 +52,7 @@ function Nav() {
           <img className="profile-icon" src={avatar || profileIcon} />
           <img className="nav-arrow" src={arrow} onClick={handleToggle} style={{ transform: showLogout ? "rotate(180deg)" : "rotate(0deg)" }} />
           {showLogout && (
-            <button className="logout-button" onClick={handleLogout}>
+            <button className="logout-button" onClick={logout}>
               Log out
             </button>
           )}
