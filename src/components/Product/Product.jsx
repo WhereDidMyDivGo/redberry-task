@@ -2,7 +2,7 @@ import "./Product.css";
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import arrow from "../../assets/arrow.svg";
 import cartIcon from "../../assets/cartIcon.svg";
@@ -10,6 +10,7 @@ import { string } from "yup";
 
 function Product() {
   const { token } = useAuth();
+  const navigate = useNavigate();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
@@ -34,6 +35,10 @@ function Product() {
 
   const addToCart = (e) => {
     e.preventDefault();
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     let invalid = false;
 
     if (!selectedColor) {
