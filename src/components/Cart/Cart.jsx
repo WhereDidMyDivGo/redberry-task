@@ -13,6 +13,10 @@ function Cart({ onClose }) {
   const total = subtotal === 0 ? 0 : subtotal + 5;
   const [loading, setLoading] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const prevTotals = useRef({});
+  const prevCartTotal = useRef(total);
+  const totalRefs = useRef({});
+  const cartTotalRef = useRef();
 
   const handleClose = () => {
     setIsClosing(true);
@@ -20,6 +24,36 @@ function Cart({ onClose }) {
       onClose();
     }, 500);
   };
+
+  useEffect(() => {
+    cart.forEach((item) => {
+      const prevT = prevTotals.current[item.id];
+      if (prevT !== undefined && prevT !== item.total_price) {
+        const color = item.total_price > prevT ? "green" : "red";
+        const ref = totalRefs.current[item.id];
+        if (ref) {
+          ref.style.color = color;
+          setTimeout(() => {
+            ref.style.color = "#10151f";
+          }, 1000);
+        }
+      }
+      prevTotals.current[item.id] = item.total_price;
+    });
+  }, [cart]);
+
+  useEffect(() => {
+    if (prevCartTotal.current !== undefined && prevCartTotal.current !== total) {
+      const color = total > prevCartTotal.current ? "green" : "red";
+      if (cartTotalRef.current) {
+        cartTotalRef.current.style.color = color;
+        setTimeout(() => {
+          cartTotalRef.current.style.color = "#10151f";
+        }, 1000);
+      }
+    }
+    prevCartTotal.current = total;
+  }, [total]);
 
   return (
     <div className={`cart${isClosing ? " closing" : ""}`} onClick={handleClose}>
@@ -46,7 +80,9 @@ function Cart({ onClose }) {
                           <p className="color">{item.color}</p>
                           <p className="size">{item.size}</p>
                         </div>
-                        <p className="price">$ {item.total_price}</p>
+                        <p className="price" ref={(el) => (totalRefs.current[item.id] = el)}>
+                          $ {item.total_price}
+                        </p>
                       </div>
                       <div className="item-controls">
                         <div className="amount">
@@ -80,7 +116,7 @@ function Cart({ onClose }) {
                 </div>
                 <div className="total">
                   <p>Total</p>
-                  <p>$ {total}</p>
+                  <p ref={cartTotalRef}>$ {total}</p>
                 </div>
               </div>
               <button type="submit" className="checkout" disabled={loading || loadingIds} style={{ opacity: loading || loadingIds ? 0.6 : 1 }}>

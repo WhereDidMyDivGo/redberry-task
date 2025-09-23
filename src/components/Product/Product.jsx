@@ -27,7 +27,6 @@ function Product() {
       .then((res) => res.json())
       .then((data) => {
         setProduct(data);
-        console.log(JSON.stringify(data, null, 2));
       })
       .catch((err) => console.error(err));
   }, [id]);
@@ -85,10 +84,9 @@ function Product() {
       },
       body: cartData,
     })
-      .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
-      .then(({ ok, data }) => {
+      .then((res) => {
         setLoading(false);
-        if (ok) setCartOpen(true);
+        if (res.ok) setCartOpen(true);
       })
       .catch((err) => {
         console.log(err);

@@ -145,6 +145,7 @@
                 font-weight: 500;
                 line-height: normal;
                 white-space: nowrap;
+                transition: 0.3s;
               }
             }
 
@@ -239,6 +240,7 @@
             font-style: normal;
             font-weight: 500;
             line-height: normal;
+            transition: 0.3s;
           }
         }
       }
