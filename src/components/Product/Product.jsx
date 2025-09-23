@@ -35,18 +35,16 @@ function Product() {
     e.preventDefault();
     let invalid = false;
 
-    switch (true) {
-      case !selectedColor:
-        setColorInvalid(true);
-        invalid = true;
-        setTimeout(() => setColorInvalid(false), 1500);
-      case !selectedSize:
-        setSizeInvalid(true);
-        invalid = true;
-        setTimeout(() => setSizeInvalid(false), 1500);
-        break;
-      default:
-        break;
+    if (!selectedColor) {
+      setColorInvalid(true);
+      invalid = true;
+      setTimeout(() => setColorInvalid(false), 1500);
+    }
+    
+    if (!selectedSize) {
+      setSizeInvalid(true);
+      invalid = true;
+      setTimeout(() => setSizeInvalid(false), 1500);
     }
 
     if (invalid) {
