@@ -11,7 +11,7 @@
   animation: fadeIn 1.5s forwards;
 
   &.closing {
-    animation: fadeOut 1.5s forwards;
+    animation: fadeOut 0.5s forwards;
   }
 
   .cart-content {
@@ -80,11 +80,6 @@
           align-items: center;
           gap: 17px;
           transition: 0.4s;
-
-          &.removing {
-            opacity: 0.5;
-            pointer-events: none;
-          }
 
           img {
             width: 100px;

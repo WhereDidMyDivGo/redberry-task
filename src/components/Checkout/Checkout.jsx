@@ -3,13 +3,18 @@ import "./Checkout.css";
 import emailIcon from "../../assets/emailIcon.svg";
 
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
+import Success from "../Success/Success";
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Checkout() {
-  const { cart, removeProduct, removingIds, changeQuantity, loadingIds } = useCart();
+  const { token } = useAuth();
+  const { cart, removeProduct, removingIds, changeQuantity, loadingIds, setCart } = useCart();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const subtotal = cart.reduce((sum, item) => sum + item.total_price, 0);
   const total = subtotal === 0 ? 0 : subtotal + 5;
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const totalRefs = useRef({});
   const cartTotalRef = useRef();
   const prevTotals = useRef({});
@@ -51,8 +56,35 @@ function Checkout() {
 
   const handleCheckoutSubmit = (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    const form = e.target;
+    const cartData = new FormData();
+    cartData.append("name", form.name.value);
+    cartData.append("surname", form.surname.value);
+    cartData.append("email", form.email.value);
+    cartData.append("address", form.address.value);
+    cartData.append("zip_code", form["zip-code"].value);
 
-    //
+    fetch("https://api.redseam.redberryinternship.ge/api/cart/checkout", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: cartData,
+    })
+      .then((res) => res.json().then(() => ({ ok: res.ok })))
+      .then(({ ok }) => {
+        setSubmitting(false);
+        if (ok) {
+          setCart([]);
+          setShowSuccessModal(true);
+        }
+      })
+      .catch((err) => {
+        setSubmitting(false);
+        console.log(err);
+      });
   };
 
   return (
@@ -91,7 +123,7 @@ function Checkout() {
           <div className="cart-items-wrapper">
             <div className="cart-items">
               {cart.map((item, idx) => (
-                <div className={`cart-item${removingIds.includes(item.id) ? " removing" : ""}`} key={item.id || idx}>
+                <div className={"cart-item"} style={{ opacity: removingIds.includes(item.id) || submitting ? 0.5 : 1, pointerEvents: removingIds.includes(item.id) || submitting ? "none" : "auto" }} key={item.id || idx}>
                   <img src={item.cover_image} alt={item.name} />
 
                   <div className="item-info">
@@ -140,11 +172,12 @@ function Checkout() {
             </div>
           </div>
 
-          <button type="submit" className="submit" form="checkout-form" disabled={loading || loadingIds} style={{ opacity: loading || loadingIds ? 0.6 : 1 }}>
+          <button type="submit" className="submit" form="checkout-form" disabled={submitting || loadingIds || cart.length === 0} style={{ opacity: submitting || loadingIds || cart.length === 0 ? 0.6 : 1 }}>
             <p>Go to checkout</p>
           </button>
         </div>
       </div>
+      {showSuccessModal && <Success onClose={() => setShowSuccessModal(false)} />}
     </div>
   );
 }

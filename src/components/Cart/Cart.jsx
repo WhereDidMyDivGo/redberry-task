@@ -77,7 +77,7 @@ function Cart({ onClose }) {
             <div className="cart-items-wrapper">
               <div className="cart-items">
                 {cart.map((item, idx) => (
-                  <div className={`cart-item${removingIds.includes(item.id) ? " removing" : ""}`} key={item.id || idx}>
+                  <div className={"cart-item"} style={{ opacity: removingIds.includes(item.id) ? 0.5 : 1, pointerEvents: removingIds.includes(item.id) ? "none" : "auto" }} key={item.id || idx}>
                     <img src={item.cover_image} alt={item.name} />
 
                     <div className="item-info">
