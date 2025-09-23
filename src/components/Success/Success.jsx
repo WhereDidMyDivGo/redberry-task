@@ -32,7 +32,7 @@ function Success({ onClose }) {
           </div>
         </div>
         <button type="button" className="continue-shopping" onClick={handleClose}>
-          <p>Pay</p>
+          <p>Continue shopping</p>
         </button>
       </div>
     </div>

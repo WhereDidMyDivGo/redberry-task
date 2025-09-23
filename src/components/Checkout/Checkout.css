@@ -57,6 +57,7 @@
           border-radius: 8px;
           border: 1px solid var(--Grey-2, #e1dfe1);
           background: var(--White, #fff);
+          position: relative;
 
           img {
             width: 20px;
@@ -82,6 +83,18 @@
             &[type="number"]::-webkit-inner-spin-button {
               -webkit-appearance: none;
             }
+          }
+
+          .error-msg {
+            position: absolute;
+            bottom: -20px;
+            left: 6px;
+            color: var(--Red, #ff4000);
+            font-family: Poppins;
+            font-size: 10px;
+            font-style: normal;
+            font-weight: 300;
+            line-height: normal;
           }
         }
       }

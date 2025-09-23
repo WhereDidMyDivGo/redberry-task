@@ -20,10 +20,6 @@ const schema = yup.object().shape({
 
 function Register() {
   const { login } = useAuth();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState(profile);
   const [avatarFile, setAvatarFile] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -31,6 +27,12 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [formValues, setFormValues] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const handleValidation = async () => {
     try {
@@ -61,10 +63,10 @@ function Register() {
     }
 
     const formData = new FormData();
-    formData.append("email", email);
-    formData.append("username", username);
-    formData.append("password", password);
-    formData.append("password_confirmation", confirmPassword);
+    formData.append("email", formValues.email);
+    formData.append("username", formValues.username);
+    formData.append("password", formValues.password);
+    formData.append("password_confirmation", formValues.confirmPassword);
     if (avatarFile) formData.append("avatar", avatarFile);
 
     fetch("https://api.redseam.redberryinternship.ge/api/register", {
@@ -117,7 +119,7 @@ function Register() {
 
           <div className="inputs">
             <label htmlFor="register-username" className="username">
-              <input id="register-username" type="text" placeholder="Username *" value={username} onChange={(e) => setUsername(e.target.value)} />
+              <input id="register-username" type="text" placeholder="Username *" value={formValues.username} onChange={(e) => setFormValues((v) => ({ ...v, username: e.target.value }))} />
               {errors.username &&
                 errors.username.map((msg, idx) => (
                   <p className="error-msg" key={idx}>
@@ -126,7 +128,7 @@ function Register() {
                 ))}
             </label>
             <label htmlFor="register-email" className="email">
-              <input id="register-email" autoComplete="email" type="email" placeholder="Email *" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input id="register-email" autoComplete="email" type="email" placeholder="Email *" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
               {errors.email &&
                 errors.email.map((msg, idx) => (
                   <p className="error-msg" key={idx}>
@@ -135,7 +137,7 @@ function Register() {
                 ))}
             </label>
             <label htmlFor="register-password" className="password">
-              <input id="register-password" autoComplete="new-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <input id="register-password" autoComplete="new-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={formValues.password} onChange={(e) => setFormValues((v) => ({ ...v, password: e.target.value }))} />
               <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
                 <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>
@@ -147,7 +149,7 @@ function Register() {
                 ))}
             </label>
             <label htmlFor="register-confirm-password" className="confirm-password">
-              <input id="register-confirm-password" autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password *" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+              <input id="register-confirm-password" autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password *" value={formValues.confirmPassword} onChange={(e) => setFormValues((v) => ({ ...v, confirmPassword: e.target.value }))} />
               <button className="toggle-password" type="button" onClick={() => setShowConfirmPassword((prev) => !prev)}>
                 <img className="eye-icon" src={showConfirmPassword ? closedEyeIcon : eyeIcon} alt={showConfirmPassword ? "Hide password" : "Show password"} />
               </button>

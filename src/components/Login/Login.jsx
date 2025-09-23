@@ -17,8 +17,10 @@ const schema = yup.object().shape({
 
 const Login = () => {
   const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -53,8 +55,8 @@ const Login = () => {
     }
 
     const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
+    formData.append("email", formValues.email);
+    formData.append("password", formValues.password);
 
     fetch("https://api.redseam.redberryinternship.ge/api/login", {
       method: "POST",
@@ -95,7 +97,7 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <div className="inputs">
             <label htmlFor="login-email" className="email">
-              <input id="login-email" autoComplete="email" type="email" placeholder="Email or username *" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input id="login-email" autoComplete="email" type="email" placeholder="Email or username *" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
               {errors.email &&
                 errors.email.map((msg, idx) => (
                   <p className="error-msg" key={idx}>
@@ -104,7 +106,7 @@ const Login = () => {
                 ))}
             </label>
             <label htmlFor="login-password" className="password">
-              <input id="login-password" autoComplete="current-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <input id="login-password" autoComplete="current-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={formValues.password} onChange={(e) => setFormValues((v) => ({ ...v, password: e.target.value }))} />
               <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
                 <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
               </button>

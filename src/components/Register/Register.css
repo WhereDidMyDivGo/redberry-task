@@ -130,6 +130,11 @@
             border: none;
             outline: none;
             background-color: transparent;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             .eye-icon {
               width: 16.694px;

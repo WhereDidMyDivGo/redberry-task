@@ -4,9 +4,18 @@ import emailIcon from "../../assets/emailIcon.svg";
 
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
-import Success from "../Success/Success";
 import { useState, useRef, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import * as yup from "yup";
+import Success from "../Success/Success";
+
+const schema = yup.object().shape({
+  name: yup.string().required("Name is required."),
+  surname: yup.string().required("Surname is required."),
+  email: yup.string().email("Invalid email.").required("Email is required."),
+  address: yup.string().required("Address is required."),
+  zip_code: yup.string().required("Zip code is required."),
+});
 
 function Checkout() {
   const { token } = useAuth();
@@ -19,6 +28,14 @@ function Checkout() {
   const cartTotalRef = useRef();
   const prevTotals = useRef({});
   const prevCartTotal = useRef(total);
+  const [errors, setErrors] = useState({});
+  const [formValues, setFormValues] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    address: "",
+    zip_code: "",
+  });
 
   useEffect(() => {
     cart.forEach((item) => {
@@ -54,16 +71,39 @@ function Checkout() {
     if (e.key === "-" || e.key === "+" || e.key === "e") e.preventDefault();
   };
 
-  const handleCheckoutSubmit = (e) => {
+  const handleValidation = async () => {
+    try {
+      await schema.validate(formValues, { abortEarly: false });
+      return null;
+    } catch (err) {
+      const errorsObj = { errors: {} };
+      if (err.inner && err.inner.length) {
+        err.inner.forEach((e) => {
+          if (!errorsObj.errors[e.path]) errorsObj.errors[e.path] = [e.message];
+        });
+      } else if (err.path) {
+        errorsObj.errors[err.path] = [err.message];
+      }
+      return errorsObj;
+    }
+  };
+
+  const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    const form = e.target;
+    const validation = await handleValidation();
+    if (validation) {
+      setErrors(validation.errors || {});
+      setSubmitting(false);
+      return;
+    }
+    setErrors({});
     const cartData = new FormData();
-    cartData.append("name", form.name.value);
-    cartData.append("surname", form.surname.value);
-    cartData.append("email", form.email.value);
-    cartData.append("address", form.address.value);
-    cartData.append("zip_code", form["zip-code"].value);
+    cartData.append("name", formValues.name);
+    cartData.append("surname", formValues.surname);
+    cartData.append("email", formValues.email);
+    cartData.append("address", formValues.address);
+    cartData.append("zip_code", formValues.zip_code);
 
     fetch("https://api.redseam.redberryinternship.ge/api/cart/checkout", {
       method: "POST",
@@ -101,22 +141,52 @@ function Checkout() {
           <div className="inputs">
             <div className="grouped-inputs">
               <label htmlFor="name">
-                <input id="name" type="text" placeholder="Name" autoComplete="given-name" required />
+                <input id="name" type="text" placeholder="Name" autoComplete="given-name" value={formValues.name} onChange={(e) => setFormValues((v) => ({ ...v, name: e.target.value }))} />
+                {errors.name &&
+                  errors.name.map((msg, idx) => (
+                    <p className="error-msg" key={idx}>
+                      {msg}
+                    </p>
+                  ))}
               </label>
               <label htmlFor="surname">
-                <input id="surname" type="text" placeholder="Surname" autoComplete="family-name" required />
+                <input id="surname" type="text" placeholder="Surname" autoComplete="family-name" value={formValues.surname} onChange={(e) => setFormValues((v) => ({ ...v, surname: e.target.value }))} />
+                {errors.surname &&
+                  errors.surname.map((msg, idx) => (
+                    <p className="error-msg" key={idx}>
+                      {msg}
+                    </p>
+                  ))}
               </label>
             </div>
             <label htmlFor="email">
               <img src={emailIcon} />
-              <input id="email" type="email" placeholder="Email" autoComplete="email" required />
+              <input id="email" type="email" placeholder="Email" autoComplete="email" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
+              {errors.email &&
+                errors.email.map((msg, idx) => (
+                  <p className="error-msg" key={idx}>
+                    {msg}
+                  </p>
+                ))}
             </label>
             <div className="grouped-inputs">
               <label htmlFor="address">
-                <input id="address" type="text" placeholder="Address" autoComplete="street-address" required />
+                <input id="address" type="text" placeholder="Address" autoComplete="street-address" value={formValues.address} onChange={(e) => setFormValues((v) => ({ ...v, address: e.target.value }))} />
+                {errors.address &&
+                  errors.address.map((msg, idx) => (
+                    <p className="error-msg" key={idx}>
+                      {msg}
+                    </p>
+                  ))}
               </label>
               <label htmlFor="zip-code">
-                <input id="zip-code" type="number" placeholder="Zip code" autoComplete="postal-code" onKeyDown={blockInvalidKeys} required />
+                <input id="zip-code" type="number" placeholder="Zip code" autoComplete="postal-code" onKeyDown={blockInvalidKeys} value={formValues.zip_code} onChange={(e) => setFormValues((v) => ({ ...v, zip_code: e.target.value }))} />
+                {errors.zip_code &&
+                  errors.zip_code.map((msg, idx) => (
+                    <p className="error-msg" key={idx}>
+                      {msg}
+                    </p>
+                  ))}
               </label>
             </div>
           </div>
@@ -176,7 +246,7 @@ function Checkout() {
           </div>
 
           <button type="submit" className="submit" form="checkout-form" disabled={submitting || loadingIds.length > 0 || cart.length === 0} style={{ opacity: submitting || loadingIds.length > 0 || cart.length === 0 ? 0.6 : 1 }}>
-            <p>Go to checkout</p>
+            <p>Pay</p>
           </button>
         </div>
       </div>
