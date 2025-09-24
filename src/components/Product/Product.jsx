@@ -17,11 +17,18 @@ function Product() {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(null);
+  const [imageTransitioning, setImageTransitioning] = useState(false);
   const [shake, setShake] = useState(false);
   const [colorInvalid, setColorInvalid] = useState(false);
   const [sizeInvalid, setSizeInvalid] = useState(false);
   const [loading, setLoading] = useState(false);
   const { setCartOpen, addProduct } = useCart();
+
+  const getColorImage = (images, availableColors, selectedColor) => {
+    if (!images || !availableColors || !selectedColor) return images?.[0] || null;
+    const colorIndex = availableColors.findIndex((color) => color.toLowerCase() === selectedColor.toLowerCase());
+    return colorIndex >= 0 && images[colorIndex] ? images[colorIndex] : images[0];
+  };
 
   useEffect(() => {
     fetch(`https://api.redseam.redberryinternship.ge/api/products/${id}`)
@@ -125,7 +132,13 @@ function Product() {
                       alt={`mini-${idx}`}
                       onClick={() => {
                         if (mainImage !== img) {
-                          setMainImage(img);
+                          setImageTransitioning(true);
+                          setTimeout(() => {
+                            setMainImage(img);
+                            setTimeout(() => {
+                              setImageTransitioning(false);
+                            }, 50);
+                          }, 150);
                         }
                       }}
                       style={{ cursor: "pointer" }}
@@ -133,7 +146,18 @@ function Product() {
                   ))
                 : Array.from({ length: 5 }).map((_, idx) => <div key={idx} className="shimmer shimmer-mini-pic" />)}
             </div>
-            {mainImage ? <img className="main-pic" src={mainImage} alt={product ? product.name : "main"} /> : <div className="shimmer shimmer-main-pic" />}
+            {mainImage ? (
+              <img
+                className={`main-pic ${imageTransitioning ? "transitioning" : ""}`}
+                src={mainImage}
+                alt={product ? product.name : "main"}
+                style={{
+                  opacity: imageTransitioning ? 0.3 : 1,
+                }}
+              />
+            ) : (
+              <div className="shimmer shimmer-main-pic" />
+            )}
           </div>
           <div className="info">
             <header className="info-header">
@@ -147,7 +171,25 @@ function Product() {
                 <div className="available-colors">
                   {product && product.available_colors
                     ? product.available_colors.map((color, idx) => (
-                        <button type="button" key={idx} style={{}} onClick={() => setSelectedColor(color)} className={selectedColor === color ? "selected" : ""}>
+                        <button
+                          type="button"
+                          key={idx}
+                          style={{}}
+                          onClick={() => {
+                            setSelectedColor(color);
+                            const colorImage = getColorImage(product.images, product.available_colors, color);
+                            if (colorImage && colorImage !== mainImage) {
+                              setImageTransitioning(true);
+                              setTimeout(() => {
+                                setMainImage(colorImage);
+                                setTimeout(() => {
+                                  setImageTransitioning(false);
+                                }, 50);
+                              }, 150);
+                            }
+                          }}
+                          className={selectedColor === color ? "selected" : ""}
+                        >
                           <span style={{ backgroundColor: color }}></span>
                         </button>
                       ))
