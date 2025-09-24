@@ -48,19 +48,25 @@ export function CartProvider({ children }) {
     });
   };
 
-  const removeProduct = async (productId) => {
+  const removeProduct = async (cartItem) => {
+    const productId = cartItem.id;
     setRemovingIds((ids) => [...ids, productId]);
     setLoadingIds((ids) => [...ids, productId]);
     try {
       const res = await fetch(`https://api.redseam.redberryinternship.ge/api/cart/products/${productId}`, {
         method: "DELETE",
         headers: {
+          "Content-Type": "application/json",
           accept: "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({
+          color: cartItem.color,
+          size: cartItem.size,
+        }),
       });
       if (res.ok) {
-        setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+        setCart((prevCart) => prevCart.filter((item) => item.cartKey !== cartItem.cartKey));
         setLoadingIds((ids) => ids.filter((id) => id !== productId));
       }
     } catch (err) {
@@ -70,21 +76,19 @@ export function CartProvider({ children }) {
     }
   };
 
-  const changeQuantity = async (productId, action) => {
-    const currentCart = cart;
-    const item = currentCart.find((i) => i.id === productId);
-    if (!item) return;
+  const changeQuantity = async (cartItem, action) => {
+    const productId = cartItem.id;
+    let newQuantity = cartItem.quantity;
 
-    let newQuantity = item.quantity;
     if (action === "increase") {
-      newQuantity = item.quantity + 1;
-    } else if (action === "decrease" && item.quantity > 1) {
-      newQuantity = item.quantity - 1;
+      newQuantity = cartItem.quantity + 1;
+    } else if (action === "decrease" && cartItem.quantity > 1) {
+      newQuantity = cartItem.quantity - 1;
     }
 
     setCart((prevCart) => {
       return prevCart.map((item) => {
-        if (item.id !== productId) return item;
+        if (item.cartKey !== cartItem.cartKey) return item;
         const pricePerUnit = item.total_price / item.quantity;
         return { ...item, quantity: newQuantity, total_price: pricePerUnit * newQuantity };
       });
@@ -98,7 +102,11 @@ export function CartProvider({ children }) {
           accept: "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ quantity: newQuantity }),
+        body: JSON.stringify({
+          quantity: newQuantity,
+          color: cartItem.color,
+          size: cartItem.size,
+        }),
       });
       setLoadingIds((ids) => ids.filter((id) => id !== productId));
     } catch (err) {

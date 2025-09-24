@@ -24,9 +24,7 @@ function Checkout() {
   const subtotal = cart.reduce((sum, item) => sum + item.total_price, 0);
   const total = subtotal === 0 ? 0 : subtotal + 5;
   const [submitting, setSubmitting] = useState(false);
-  const totalRefs = useRef({});
   const cartTotalRef = useRef();
-  const prevTotals = useRef({});
   const prevCartTotal = useRef(total);
   const [errors, setErrors] = useState({});
   const [formValues, setFormValues] = useState({
@@ -36,24 +34,6 @@ function Checkout() {
     address: "",
     zip_code: "",
   });
-
-  useEffect(() => {
-    cart.forEach((item, idx) => {
-      const itemKey = item.cartKey || `${item.id}-${idx}`;
-      const prevT = prevTotals.current[itemKey];
-      if (prevT !== undefined && prevT !== item.total_price) {
-        const color = item.total_price > prevT ? "green" : "red";
-        const ref = totalRefs.current[itemKey];
-        if (ref) {
-          ref.style.color = color;
-          setTimeout(() => {
-            ref.style.color = "#10151f";
-          }, 1000);
-        }
-      }
-      prevTotals.current[itemKey] = item.total_price;
-    });
-  }, [cart]);
 
   useEffect(() => {
     if (prevCartTotal.current !== undefined && prevCartTotal.current !== total) {
@@ -208,21 +188,19 @@ function Checkout() {
                           <p className="color">{item.color}</p>
                           <p className="size">{item.size}</p>
                         </div>
-                        <p className="price" ref={(el) => (totalRefs.current[item.cartKey || `${item.id}-${idx}`] = el)}>
-                          $ {item.total_price}
-                        </p>
+                        <p className="price">$ {item.total_price}</p>
                       </div>
                       <div className="item-controls">
                         <div className="amount">
-                          <button type="button" className="decrease" style={{ color: item.quantity === 1 ? "#E1DFE1" : "#3E424A" }} disabled={item.quantity === 1} onClick={() => changeQuantity(item.id, "decrease")}>
+                          <button type="button" className="decrease" style={{ color: item.quantity === 1 ? "#E1DFE1" : "#3E424A" }} disabled={item.quantity === 1} onClick={() => changeQuantity(item, "decrease")}>
                             -
                           </button>
                           <p>{item.quantity}</p>
-                          <button type="button" className="increase" onClick={() => changeQuantity(item.id, "increase")}>
+                          <button type="button" className="increase" onClick={() => changeQuantity(item, "increase")}>
                             +
                           </button>
                         </div>
-                        <button type="button" className="remove" onClick={() => removeProduct(item.id)}>
+                        <button type="button" className="remove" onClick={() => removeProduct(item)}>
                           Remove
                         </button>
                       </div>
