@@ -26,11 +26,12 @@ function Cart({ onClose }) {
   };
 
   useEffect(() => {
-    cart.forEach((item) => {
-      const prevT = prevTotals.current[item.id];
+    cart.forEach((item, idx) => {
+      const itemKey = item.cartKey || `${item.id}-${idx}`;
+      const prevT = prevTotals.current[itemKey];
       if (prevT !== undefined && prevT !== item.total_price) {
         const color = item.total_price > prevT ? "green" : "red";
-        const ref = totalRefs.current[item.id];
+        const ref = totalRefs.current[itemKey];
         if (ref) {
           ref.style.color = color;
           setTimeout(() => {
@@ -38,7 +39,7 @@ function Cart({ onClose }) {
           }, 1000);
         }
       }
-      prevTotals.current[item.id] = item.total_price;
+      prevTotals.current[itemKey] = item.total_price;
     });
   }, [cart]);
 
@@ -76,7 +77,7 @@ function Cart({ onClose }) {
             <div className="cart-items-wrapper">
               <div className="cart-items">
                 {cart.map((item, idx) => (
-                  <div className={"cart-item"} style={{ opacity: removingIds.includes(item.id) ? 0.5 : 1, pointerEvents: removingIds.includes(item.id) ? "none" : "auto" }} key={item.id || idx}>
+                  <div className={"cart-item"} style={{ opacity: removingIds.includes(item.id) ? 0.5 : 1, pointerEvents: removingIds.includes(item.id) ? "none" : "auto" }} key={item.cartKey || `${item.id}-${idx}`}>
                     <img src={item.cover_image} alt={item.name} />
 
                     <div className="item-info">
@@ -86,7 +87,7 @@ function Cart({ onClose }) {
                           <p className="color">{item.color}</p>
                           <p className="size">{item.size}</p>
                         </div>
-                        <p className="price" ref={(el) => (totalRefs.current[item.id] = el)}>
+                        <p className="price" ref={(el) => (totalRefs.current[item.cartKey || `${item.id}-${idx}`] = el)}>
                           $ {item.total_price}
                         </p>
                       </div>

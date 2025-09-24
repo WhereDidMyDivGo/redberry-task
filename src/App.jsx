@@ -16,7 +16,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 function App() {
   const navigate = useNavigate();
-  const { setCart } = useCart();
+  const { setCartFromAPI } = useCart();
   const { token } = useAuth();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function App() {
           return res.json().then((data) => ({ ok: res.ok, data }));
         })
         .then(({ ok, data }) => {
-          if (ok) setCart(data);
+          if (ok) setCartFromAPI(data);
         })
         .catch((err) => {
           toast.error(err.message || "Failed to fetch cart.");

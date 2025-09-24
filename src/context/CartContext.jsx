@@ -13,22 +13,26 @@ export function CartProvider({ children }) {
 
   const addProduct = (product) => {
     setCart((prevCart) => {
-      const idx = prevCart.findIndex((item) => String(item.id) === String(product.id));
+      const idx = prevCart.findIndex((item) => String(item.id) === String(product.id) && item.color === product.color && item.size === product.size);
+
       if (idx !== -1) {
         const updated = [...prevCart];
         const existing = updated[idx];
         const newQuantity = existing.quantity + product.quantity;
         updated[idx] = {
           ...existing,
+          cartKey: existing.cartKey || `${existing.id}-${existing.color}-${existing.size}`, // Ensure cartKey exists
           quantity: newQuantity,
           total_price: existing.price * newQuantity,
         };
         return updated;
       } else {
+        const cartKey = `${product.id}-${product.color}-${product.size}`;
         return [
           ...prevCart,
           {
             ...product,
+            cartKey,
             total_price: product.price * product.quantity,
           },
         ];
@@ -69,8 +73,16 @@ export function CartProvider({ children }) {
       }
       return prevCart.map((item) => {
         if (item.id !== productId) return item;
-        if (action === "increase") return { ...item, quantity: item.quantity + 1, total_price: (item.total_price / item.quantity) * (item.quantity + 1) };
-        if (action === "decrease" && item.quantity > 1) return { ...item, quantity: item.quantity - 1, total_price: (item.total_price / item.quantity) * (item.quantity - 1) };
+
+        const pricePerUnit = item.total_price / item.quantity;
+        if (action === "increase") {
+          const newQty = item.quantity + 1;
+          return { ...item, quantity: newQty, total_price: pricePerUnit * newQty };
+        }
+        if (action === "decrease" && item.quantity > 1) {
+          const newQty = item.quantity - 1;
+          return { ...item, quantity: newQty, total_price: pricePerUnit * newQty };
+        }
         return item;
       });
     });
@@ -92,7 +104,15 @@ export function CartProvider({ children }) {
     }
   };
 
-  return <CartContext.Provider value={{ cartOpen, setCartOpen, cart, setCart, removeProduct, removingIds, changeQuantity, addProduct, loadingIds }}>{children}</CartContext.Provider>;
+  const setCartFromAPI = (cartData) => {
+    const normalizedCart = cartData.map((item) => ({
+      ...item,
+      cartKey: `${item.id}-${item.color}-${item.size}`,
+    }));
+    setCart(normalizedCart);
+  };
+
+  return <CartContext.Provider value={{ cartOpen, setCartOpen, cart, setCart, setCartFromAPI, removeProduct, removingIds, changeQuantity, addProduct, loadingIds }}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {
