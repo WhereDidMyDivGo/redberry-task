@@ -24,7 +24,9 @@ function Checkout() {
   const subtotal = cart.reduce((sum, item) => sum + item.total_price, 0);
   const total = subtotal === 0 ? 0 : subtotal + 5;
   const [submitting, setSubmitting] = useState(false);
+  const totalRefs = useRef({});
   const cartTotalRef = useRef();
+  const prevTotals = useRef({});
   const prevCartTotal = useRef(total);
   const [errors, setErrors] = useState({});
   const [formValues, setFormValues] = useState({
@@ -34,6 +36,24 @@ function Checkout() {
     address: "",
     zip_code: "",
   });
+
+  useEffect(() => {
+    cart.forEach((item, idx) => {
+      const itemKey = item.cartKey || `${item.id}-${idx}`;
+      const prevT = prevTotals.current[itemKey];
+      if (prevT !== undefined && prevT !== item.total_price) {
+        const color = item.total_price > prevT ? "green" : "red";
+        const ref = totalRefs.current[itemKey];
+        if (ref) {
+          ref.style.color = color;
+          setTimeout(() => {
+            ref.style.color = "#10151f";
+          }, 1000);
+        }
+      }
+      prevTotals.current[itemKey] = item.total_price;
+    });
+  }, [cart]);
 
   useEffect(() => {
     if (prevCartTotal.current !== undefined && prevCartTotal.current !== total) {
@@ -178,7 +198,7 @@ function Checkout() {
             <div className="cart-items-wrapper">
               <div className="cart-items">
                 {cart.map((item, idx) => (
-                  <div className={"cart-item"} style={{ opacity: removingIds.includes(item.id) || submitting ? 0.5 : 1, pointerEvents: removingIds.includes(item.id) || submitting ? "none" : "auto" }} key={item.cartKey || `${item.id}-${idx}`}>
+                  <div className={"cart-item"} style={{ opacity: removingIds.includes(item.cartKey) || submitting ? 0.5 : 1, pointerEvents: removingIds.includes(item.cartKey) || submitting ? "none" : "auto" }} key={item.cartKey || `${item.id}-${idx}`}>
                     <img src={item.cover_image} alt={item.name} />
 
                     <div className="item-info">
@@ -188,7 +208,9 @@ function Checkout() {
                           <p className="color">{item.color}</p>
                           <p className="size">{item.size}</p>
                         </div>
-                        <p className="price">$ {item.total_price}</p>
+                        <p className="price" ref={(el) => (totalRefs.current[item.cartKey || `${item.id}-${idx}`] = el)}>
+                          $ {item.total_price}
+                        </p>
                       </div>
                       <div className="item-controls">
                         <div className="amount">

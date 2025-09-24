@@ -50,7 +50,8 @@ export function CartProvider({ children }) {
 
   const removeProduct = async (cartItem) => {
     const productId = cartItem.id;
-    setRemovingIds((ids) => [...ids, productId]);
+    const cartKey = cartItem.cartKey;
+    setRemovingIds((ids) => [...ids, cartKey]);
     setLoadingIds((ids) => [...ids, productId]);
     try {
       const res = await fetch(`https://api.redseam.redberryinternship.ge/api/cart/products/${productId}`, {
@@ -72,7 +73,7 @@ export function CartProvider({ children }) {
     } catch (err) {
       console.log(err);
     } finally {
-      setRemovingIds((ids) => ids.filter((id) => id !== productId));
+      setRemovingIds((ids) => ids.filter((id) => id !== cartKey));
     }
   };
 
