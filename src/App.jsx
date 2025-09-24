@@ -46,18 +46,20 @@ function App() {
   }, [navigate, token]);
 
   return (
-    <main>
+    <>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
-      <Nav />
-      <Routes>
-        <Route path="/" element={<Navigate to="/productsList" replace />} />
-        <Route path="/productsList" element={<ProductsList />} />
-        <Route path="/product/:id" element={<Product />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/checkout" element={<Checkout />} />
-      </Routes>
-    </main>
+      <main>
+        <Nav />
+        <Routes>
+          <Route path="/" element={<Navigate to="/productsList" replace />} />
+          <Route path="/productsList" element={<ProductsList />} />
+          <Route path="/product/:id" element={<Product />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/checkout" element={<Checkout />} />
+        </Routes>
+      </main>
+    </>
   );
 }
 

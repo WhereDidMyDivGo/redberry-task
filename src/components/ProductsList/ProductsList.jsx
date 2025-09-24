@@ -175,122 +175,124 @@ function ProductsList() {
   };
 
   return (
-    <div className="products-list">
+    <>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
-      <header className="product-list-header">
-        <h1>Products</h1>
+      <div className="products-list">
+        <header className="product-list-header">
+          <h1>Products</h1>
 
-        <div className="controls">
-          <p className="results">
-            {products.meta.from || 0}–{products.meta.to || 0} of {products.meta.total || 0} results
-          </p>
-          <span className="line"></span>
-          <div className="filter" onClick={toggleFilterModal}>
-            <div className="filter-icon">
-              <img src={filterIcon} alt="Filter" />
-            </div>
-            <p>Filter</p>
-            <form className="filter-modal" onSubmit={handleFilter} onClick={(e) => e.stopPropagation()} style={{ display: isFilterModalOpen ? "flex" : "none" }}>
-              <h2>Select price</h2>
-              <div className="filter-controls">
-                <div className="inputs">
-                  <label htmlFor="filter-from">
-                    <input id="filter-from" type="number" placeholder="From *" min="0" required value={filterFrom} onChange={(e) => setFilterFrom(e.target.value)} onKeyDown={blockInvalidKeys} />
-                  </label>
-                  <label htmlFor="filter-to">
-                    <input id="filter-to" type="number" placeholder="To *" min="0" required value={filterTo} onChange={(e) => setFilterTo(e.target.value)} onKeyDown={blockInvalidKeys} />
-                  </label>
+          <div className="controls">
+            <p className="results">
+              {products.meta.from || 0}–{products.meta.to || 0} of {products.meta.total || 0} results
+            </p>
+            <span className="line"></span>
+            <div className="filter" onClick={toggleFilterModal}>
+              <div className="filter-icon">
+                <img src={filterIcon} alt="Filter" />
+              </div>
+              <p>Filter</p>
+              <form className="filter-modal" onSubmit={handleFilter} onClick={(e) => e.stopPropagation()} style={{ display: isFilterModalOpen ? "flex" : "none" }}>
+                <h2>Select price</h2>
+                <div className="filter-controls">
+                  <div className="inputs">
+                    <label htmlFor="filter-from">
+                      <input id="filter-from" type="number" placeholder="From *" min="0" required value={filterFrom} onChange={(e) => setFilterFrom(e.target.value)} onKeyDown={blockInvalidKeys} />
+                    </label>
+                    <label htmlFor="filter-to">
+                      <input id="filter-to" type="number" placeholder="To *" min="0" required value={filterTo} onChange={(e) => setFilterTo(e.target.value)} onKeyDown={blockInvalidKeys} />
+                    </label>
+                  </div>
+
+                  <button className="submit" type="submit">
+                    <p>Apply</p>
+                  </button>
                 </div>
-
-                <button className="submit" type="submit">
-                  <p>Apply</p>
-                </button>
-              </div>
-            </form>
-          </div>
-          <div className="sort" onClick={toggleSortModal}>
-            <p>{getSortLabel()}</p>
-            <div className="sort-icon">
-              <img className="sort-arrow" src={arrow} alt="Sort" style={{ transform: isSortModalOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
+              </form>
             </div>
-
-            <form className="sort-modal" onClick={(e) => e.stopPropagation()} style={{ display: isSortModalOpen ? "flex" : "none" }}>
-              <h2>Sort by</h2>
-              <div className="sort-options">
-                <button type="button" onClick={() => handleSort("created_at")} className={sortBy === "created_at" ? "active" : ""} disabled={sortBy === "created_at"}>
-                  <p>New products first</p>
-                </button>
-                <button type="button" onClick={() => handleSort("price")} className={sortBy === "price" ? "active" : ""} disabled={sortBy === "price"}>
-                  <p>Price, low to high</p>
-                </button>
-                <button type="button" onClick={() => handleSort("-price")} className={sortBy === "-price" ? "active" : ""} disabled={sortBy === "-price"}>
-                  <p>Price, high to low</p>
-                </button>
+            <div className="sort" onClick={toggleSortModal}>
+              <p>{getSortLabel()}</p>
+              <div className="sort-icon">
+                <img className="sort-arrow" src={arrow} alt="Sort" style={{ transform: isSortModalOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
               </div>
-              {sortBy && (
-                <button className="clear-sort" type="button" onClick={clearSort}>
-                  <p>Clear Sort</p>
-                </button>
-              )}
-            </form>
-          </div>
-        </div>
-      </header>
 
-      {filtersInUrl() && (
-        <div className="applied-filters">
-          <p>{`Price: ${getFiltersFromUrl().price_from}-${getFiltersFromUrl().price_to}`}</p>
-          <button className="clear-filters" onClick={clearFilters}>
-            <img src={xIcon} alt="Clear filters" />
+              <form className="sort-modal" onClick={(e) => e.stopPropagation()} style={{ display: isSortModalOpen ? "flex" : "none" }}>
+                <h2>Sort by</h2>
+                <div className="sort-options">
+                  <button type="button" onClick={() => handleSort("created_at")} className={sortBy === "created_at" ? "active" : ""} disabled={sortBy === "created_at"}>
+                    <p>New products first</p>
+                  </button>
+                  <button type="button" onClick={() => handleSort("price")} className={sortBy === "price" ? "active" : ""} disabled={sortBy === "price"}>
+                    <p>Price, low to high</p>
+                  </button>
+                  <button type="button" onClick={() => handleSort("-price")} className={sortBy === "-price" ? "active" : ""} disabled={sortBy === "-price"}>
+                    <p>Price, high to low</p>
+                  </button>
+                </div>
+                {sortBy && (
+                  <button className="clear-sort" type="button" onClick={clearSort}>
+                    <p>Clear Sort</p>
+                  </button>
+                )}
+              </form>
+            </div>
+          </div>
+        </header>
+
+        {filtersInUrl() && (
+          <div className="applied-filters">
+            <p>{`Price: ${getFiltersFromUrl().price_from}-${getFiltersFromUrl().price_to}`}</p>
+            <button className="clear-filters" onClick={clearFilters}>
+              <img src={xIcon} alt="Clear filters" />
+            </button>
+          </div>
+        )}
+
+        <div className={`products${filtersInUrl() ? " includes-filters" : ""}`}>
+          {loading
+            ? Array.from({ length: 10 }).map((_, idx) => (
+                <div className="product" key={"shimmer-" + idx}>
+                  <div className="shimmer-img shimmer" />
+                  <div className="description">
+                    <div className="shimmer-name shimmer" />
+                    <div className="shimmer-price shimmer" />
+                  </div>
+                </div>
+              ))
+            : products.data &&
+              products.data.map((product) => (
+                <Link to={`/product/${product.id}`} className="product" key={product.id}>
+                  <img src={product.cover_image} alt={product.name} />
+                  <div className="description">
+                    <p className="name">{product.name}</p>
+                    <p className="price">{product.price ? `$ ${product.price}` : ""}</p>
+                  </div>
+                </Link>
+              ))}
+        </div>
+
+        <div className="pagination">
+          <button
+            className="previous"
+            onClick={() => {
+              if (products.meta.current_page > 1) fetchProducts(products.meta.current_page - 1, getFiltersFromUrl());
+            }}
+            disabled={products.meta.current_page === 1}
+          >
+            <img src={arrow} alt="Previous" />
+          </button>
+          {getPaginationButtons(products.meta.current_page || 1, products.meta.last_page || 1, (page) => fetchProducts(page, getFiltersFromUrl()))}
+          <button
+            className="next"
+            onClick={() => {
+              if (products.meta.current_page < products.meta.last_page) fetchProducts(products.meta.current_page + 1, getFiltersFromUrl());
+            }}
+            disabled={products.meta.current_page === products.meta.last_page}
+          >
+            <img src={arrow} alt="Next" />
           </button>
         </div>
-      )}
-
-      <div className={`products${filtersInUrl() ? " includes-filters" : ""}`}>
-        {loading
-          ? Array.from({ length: 10 }).map((_, idx) => (
-              <div className="product" key={"shimmer-" + idx}>
-                <div className="shimmer-img shimmer" />
-                <div className="description">
-                  <div className="shimmer-name shimmer" />
-                  <div className="shimmer-price shimmer" />
-                </div>
-              </div>
-            ))
-          : products.data &&
-            products.data.map((product) => (
-              <Link to={`/product/${product.id}`} className="product" key={product.id}>
-                <img src={product.cover_image} alt={product.name} />
-                <div className="description">
-                  <p className="name">{product.name}</p>
-                  <p className="price">{product.price ? `$ ${product.price}` : ""}</p>
-                </div>
-              </Link>
-            ))}
       </div>
-
-      <div className="pagination">
-        <button
-          className="previous"
-          onClick={() => {
-            if (products.meta.current_page > 1) fetchProducts(products.meta.current_page - 1, getFiltersFromUrl());
-          }}
-          disabled={products.meta.current_page === 1}
-        >
-          <img src={arrow} alt="Previous" />
-        </button>
-        {getPaginationButtons(products.meta.current_page || 1, products.meta.last_page || 1, (page) => fetchProducts(page, getFiltersFromUrl()))}
-        <button
-          className="next"
-          onClick={() => {
-            if (products.meta.current_page < products.meta.last_page) fetchProducts(products.meta.current_page + 1, getFiltersFromUrl());
-          }}
-          disabled={products.meta.current_page === products.meta.last_page}
-        >
-          <img src={arrow} alt="Next" />
-        </button>
-      </div>
-    </div>
+    </>
   );
 }
 

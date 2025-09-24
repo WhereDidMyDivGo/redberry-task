@@ -36,7 +36,15 @@ function Register() {
 
   const handleValidation = async () => {
     try {
-      await schema.validate({ username, email, password, confirmPassword }, { abortEarly: false });
+      await schema.validate(
+        {
+          username: formValues.username,
+          email: formValues.email,
+          password: formValues.password,
+          confirmPassword: formValues.confirmPassword,
+        },
+        { abortEarly: false }
+      );
       return null;
     } catch (err) {
       const errorsObj = { errors: {} };
@@ -101,79 +109,81 @@ function Register() {
   };
 
   return (
-    <div className="register">
+    <>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
-      <img className="hero" src={hero} />
+      <div className="register">
+        <img className="hero" src={hero} />
 
-      <div className="form-wrapper">
-        <h1>Registration</h1>
-        <form onSubmit={handleRegister}>
-          <div className="pfp">
-            <img src={avatar} />
-            <label>
-              <p>Upload new</p>
-              <input type="file" accept=".png,.jpg,.jpeg" onChange={handleAvatar} />
-            </label>
-            <p onClick={() => handleAvatar("reset")}>Remove</p>
-          </div>
-
-          <div className="inputs">
-            <label htmlFor="register-username" className="username">
-              <input id="register-username" type="text" placeholder="Username *" value={formValues.username} onChange={(e) => setFormValues((v) => ({ ...v, username: e.target.value }))} />
-              {errors.username &&
-                errors.username.map((msg, idx) => (
-                  <p className="error-msg" key={idx}>
-                    {msg}
-                  </p>
-                ))}
-            </label>
-            <label htmlFor="register-email" className="email">
-              <input id="register-email" autoComplete="email" type="email" placeholder="Email *" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
-              {errors.email &&
-                errors.email.map((msg, idx) => (
-                  <p className="error-msg" key={idx}>
-                    {msg}
-                  </p>
-                ))}
-            </label>
-            <label htmlFor="register-password" className="password">
-              <input id="register-password" autoComplete="new-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={formValues.password} onChange={(e) => setFormValues((v) => ({ ...v, password: e.target.value }))} />
-              <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
-                <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
-              </button>
-              {errors.password &&
-                errors.password.map((msg, idx) => (
-                  <p className="error-msg" key={idx}>
-                    {msg}
-                  </p>
-                ))}
-            </label>
-            <label htmlFor="register-confirm-password" className="confirm-password">
-              <input id="register-confirm-password" autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password *" value={formValues.confirmPassword} onChange={(e) => setFormValues((v) => ({ ...v, confirmPassword: e.target.value }))} />
-              <button className="toggle-password" type="button" onClick={() => setShowConfirmPassword((prev) => !prev)}>
-                <img className="eye-icon" src={showConfirmPassword ? closedEyeIcon : eyeIcon} alt={showConfirmPassword ? "Hide password" : "Show password"} />
-              </button>
-              {errors.confirmPassword &&
-                errors.confirmPassword.map((msg, idx) => (
-                  <p className="error-msg" key={idx}>
-                    {msg}
-                  </p>
-                ))}
-            </label>
-          </div>
-
-          <div className="register-actions">
-            <button className="submit" type="submit" disabled={loading} style={{ opacity: loading ? 0.6 : 1 }}>
-              <p>Register</p>
-            </button>
-            <div className="login-link">
-              <p>Already member?</p>
-              <Link to="/login">Login</Link>
+        <div className="form-wrapper">
+          <h1>Registration</h1>
+          <form onSubmit={handleRegister}>
+            <div className="pfp">
+              <img src={avatar} />
+              <label>
+                <p>Upload new</p>
+                <input type="file" accept=".png,.jpg,.jpeg" onChange={handleAvatar} />
+              </label>
+              <p onClick={() => handleAvatar("reset")}>Remove</p>
             </div>
-          </div>
-        </form>
+
+            <div className="inputs">
+              <label htmlFor="register-username" className="username">
+                <input id="register-username" type="text" placeholder="Username *" value={formValues.username} onChange={(e) => setFormValues((v) => ({ ...v, username: e.target.value }))} />
+                {errors.username &&
+                  errors.username.map((msg, idx) => (
+                    <p className="error-msg" key={idx}>
+                      {msg}
+                    </p>
+                  ))}
+              </label>
+              <label htmlFor="register-email" className="email">
+                <input id="register-email" autoComplete="email" type="email" placeholder="Email *" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
+                {errors.email &&
+                  errors.email.map((msg, idx) => (
+                    <p className="error-msg" key={idx}>
+                      {msg}
+                    </p>
+                  ))}
+              </label>
+              <label htmlFor="register-password" className="password">
+                <input id="register-password" autoComplete="new-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={formValues.password} onChange={(e) => setFormValues((v) => ({ ...v, password: e.target.value }))} />
+                <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
+                  <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
+                </button>
+                {errors.password &&
+                  errors.password.map((msg, idx) => (
+                    <p className="error-msg" key={idx}>
+                      {msg}
+                    </p>
+                  ))}
+              </label>
+              <label htmlFor="register-confirm-password" className="confirm-password">
+                <input id="register-confirm-password" autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password *" value={formValues.confirmPassword} onChange={(e) => setFormValues((v) => ({ ...v, confirmPassword: e.target.value }))} />
+                <button className="toggle-password" type="button" onClick={() => setShowConfirmPassword((prev) => !prev)}>
+                  <img className="eye-icon" src={showConfirmPassword ? closedEyeIcon : eyeIcon} alt={showConfirmPassword ? "Hide password" : "Show password"} />
+                </button>
+                {errors.confirmPassword &&
+                  errors.confirmPassword.map((msg, idx) => (
+                    <p className="error-msg" key={idx}>
+                      {msg}
+                    </p>
+                  ))}
+              </label>
+            </div>
+
+            <div className="register-actions">
+              <button className="submit" type="submit" disabled={loading} style={{ opacity: loading ? 0.6 : 1 }}>
+                <p>Register</p>
+              </button>
+              <div className="login-link">
+                <p>Already member?</p>
+                <Link to="/login">Login</Link>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

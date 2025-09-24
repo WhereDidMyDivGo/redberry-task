@@ -130,128 +130,130 @@ function Checkout() {
   };
 
   return (
-    <div className="checkout">
+    <>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
-      <h1 className="page-title">Checkout</h1>
+      <div className="checkout">
+        <h1 className="page-title">Checkout</h1>
 
-      <div className="checkout-content">
-        <form id="checkout-form" onSubmit={handleCheckoutSubmit} className="checkout-form">
-          <h1>Order details</h1>
+        <div className="checkout-content">
+          <form id="checkout-form" onSubmit={handleCheckoutSubmit} className="checkout-form">
+            <h1>Order details</h1>
 
-          <div className="inputs">
-            <div className="grouped-inputs">
-              <label htmlFor="name">
-                <input id="name" type="text" placeholder="Name" autoComplete="given-name" value={formValues.name} onChange={(e) => setFormValues((v) => ({ ...v, name: e.target.value }))} />
-                {errors.name &&
-                  errors.name.map((msg, idx) => (
-                    <p className="error-msg" key={idx}>
-                      {msg}
-                    </p>
-                  ))}
-              </label>
-              <label htmlFor="surname">
-                <input id="surname" type="text" placeholder="Surname" autoComplete="family-name" value={formValues.surname} onChange={(e) => setFormValues((v) => ({ ...v, surname: e.target.value }))} />
-                {errors.surname &&
-                  errors.surname.map((msg, idx) => (
-                    <p className="error-msg" key={idx}>
-                      {msg}
-                    </p>
-                  ))}
-              </label>
-            </div>
-            <label htmlFor="email">
-              <img src={emailIcon} />
-              <input id="email" type="email" placeholder="Email" autoComplete="email" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
-              {errors.email &&
-                errors.email.map((msg, idx) => (
-                  <p className="error-msg" key={idx}>
-                    {msg}
-                  </p>
-                ))}
-            </label>
-            <div className="grouped-inputs">
-              <label htmlFor="address">
-                <input id="address" type="text" placeholder="Address" autoComplete="street-address" value={formValues.address} onChange={(e) => setFormValues((v) => ({ ...v, address: e.target.value }))} />
-                {errors.address &&
-                  errors.address.map((msg, idx) => (
-                    <p className="error-msg" key={idx}>
-                      {msg}
-                    </p>
-                  ))}
-              </label>
-              <label htmlFor="zip-code">
-                <input id="zip-code" type="number" placeholder="Zip code" autoComplete="postal-code" onKeyDown={blockInvalidKeys} value={formValues.zip_code} onChange={(e) => setFormValues((v) => ({ ...v, zip_code: e.target.value }))} />
-                {errors.zip_code &&
-                  errors.zip_code.map((msg, idx) => (
-                    <p className="error-msg" key={idx}>
-                      {msg}
-                    </p>
-                  ))}
-              </label>
-            </div>
-          </div>
-        </form>
-
-        <div className="checkout-cart">
-          <div className="cart-items-wrapper">
-            <div className="cart-items">
-              {cart.map((item, idx) => (
-                <div className={"cart-item"} style={{ opacity: removingIds.includes(item.id) || submitting ? 0.5 : 1, pointerEvents: removingIds.includes(item.id) || submitting ? "none" : "auto" }} key={item.id || idx}>
-                  <img src={item.cover_image} alt={item.name} />
-
-                  <div className="item-info">
-                    <div className="item-details">
-                      <div>
-                        <p className="name">{item.name}</p>
-                        <p className="color">{item.color}</p>
-                        <p className="size">{item.size}</p>
-                      </div>
-                      <p className="price" ref={(el) => (totalRefs.current[item.id] = el)}>
-                        $ {item.total_price}
+            <div className="inputs">
+              <div className="grouped-inputs">
+                <label htmlFor="name">
+                  <input id="name" type="text" placeholder="Name" autoComplete="given-name" value={formValues.name} onChange={(e) => setFormValues((v) => ({ ...v, name: e.target.value }))} />
+                  {errors.name &&
+                    errors.name.map((msg, idx) => (
+                      <p className="error-msg" key={idx}>
+                        {msg}
                       </p>
-                    </div>
-                    <div className="item-controls">
-                      <div className="amount">
-                        <button type="button" className="decrease" style={{ color: item.quantity === 1 ? "#E1DFE1" : "#3E424A" }} disabled={item.quantity === 1} onClick={() => changeQuantity(item.id, "decrease")}>
-                          -
-                        </button>
-                        <p>{item.quantity}</p>
-                        <button type="button" className="increase" onClick={() => changeQuantity(item.id, "increase")}>
-                          +
+                    ))}
+                </label>
+                <label htmlFor="surname">
+                  <input id="surname" type="text" placeholder="Surname" autoComplete="family-name" value={formValues.surname} onChange={(e) => setFormValues((v) => ({ ...v, surname: e.target.value }))} />
+                  {errors.surname &&
+                    errors.surname.map((msg, idx) => (
+                      <p className="error-msg" key={idx}>
+                        {msg}
+                      </p>
+                    ))}
+                </label>
+              </div>
+              <label htmlFor="email">
+                <img src={emailIcon} />
+                <input id="email" type="email" placeholder="Email" autoComplete="email" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
+                {errors.email &&
+                  errors.email.map((msg, idx) => (
+                    <p className="error-msg" key={idx}>
+                      {msg}
+                    </p>
+                  ))}
+              </label>
+              <div className="grouped-inputs">
+                <label htmlFor="address">
+                  <input id="address" type="text" placeholder="Address" autoComplete="street-address" value={formValues.address} onChange={(e) => setFormValues((v) => ({ ...v, address: e.target.value }))} />
+                  {errors.address &&
+                    errors.address.map((msg, idx) => (
+                      <p className="error-msg" key={idx}>
+                        {msg}
+                      </p>
+                    ))}
+                </label>
+                <label htmlFor="zip-code">
+                  <input id="zip-code" type="number" placeholder="Zip code" autoComplete="postal-code" onKeyDown={blockInvalidKeys} value={formValues.zip_code} onChange={(e) => setFormValues((v) => ({ ...v, zip_code: e.target.value }))} />
+                  {errors.zip_code &&
+                    errors.zip_code.map((msg, idx) => (
+                      <p className="error-msg" key={idx}>
+                        {msg}
+                      </p>
+                    ))}
+                </label>
+              </div>
+            </div>
+          </form>
+
+          <div className="checkout-cart">
+            <div className="cart-items-wrapper">
+              <div className="cart-items">
+                {cart.map((item, idx) => (
+                  <div className={"cart-item"} style={{ opacity: removingIds.includes(item.id) || submitting ? 0.5 : 1, pointerEvents: removingIds.includes(item.id) || submitting ? "none" : "auto" }} key={item.id || idx}>
+                    <img src={item.cover_image} alt={item.name} />
+
+                    <div className="item-info">
+                      <div className="item-details">
+                        <div>
+                          <p className="name">{item.name}</p>
+                          <p className="color">{item.color}</p>
+                          <p className="size">{item.size}</p>
+                        </div>
+                        <p className="price" ref={(el) => (totalRefs.current[item.id] = el)}>
+                          $ {item.total_price}
+                        </p>
+                      </div>
+                      <div className="item-controls">
+                        <div className="amount">
+                          <button type="button" className="decrease" style={{ color: item.quantity === 1 ? "#E1DFE1" : "#3E424A" }} disabled={item.quantity === 1} onClick={() => changeQuantity(item.id, "decrease")}>
+                            -
+                          </button>
+                          <p>{item.quantity}</p>
+                          <button type="button" className="increase" onClick={() => changeQuantity(item.id, "increase")}>
+                            +
+                          </button>
+                        </div>
+                        <button type="button" className="remove" onClick={() => removeProduct(item.id)}>
+                          Remove
                         </button>
                       </div>
-                      <button type="button" className="remove" onClick={() => removeProduct(item.id)}>
-                        Remove
-                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="cart-summary">
-            <div>
-              <p>Items subtotal</p>
-              <p>$ {subtotal}</p>
+            <div className="cart-summary">
+              <div>
+                <p>Items subtotal</p>
+                <p>$ {subtotal}</p>
+              </div>
+              <div>
+                <p>Delivery</p>
+                <p>$ 5</p>
+              </div>
+              <div className="total">
+                <p>Total</p>
+                <p ref={cartTotalRef}>$ {total}</p>
+              </div>
             </div>
-            <div>
-              <p>Delivery</p>
-              <p>$ 5</p>
-            </div>
-            <div className="total">
-              <p>Total</p>
-              <p ref={cartTotalRef}>$ {total}</p>
-            </div>
-          </div>
 
-          <button type="submit" className="submit" form="checkout-form" disabled={submitting || loadingIds.length > 0 || cart.length === 0} style={{ opacity: submitting || loadingIds.length > 0 || cart.length === 0 ? 0.6 : 1 }}>
-            <p>Pay</p>
-          </button>
+            <button type="submit" className="submit" form="checkout-form" disabled={submitting || loadingIds.length > 0 || cart.length === 0} style={{ opacity: submitting || loadingIds.length > 0 || cart.length === 0 ? 0.6 : 1 }}>
+              <p>Pay</p>
+            </button>
+          </div>
         </div>
+        {showSuccessModal && <Success onClose={() => setShowSuccessModal(false)} />}
       </div>
-      {showSuccessModal && <Success onClose={() => setShowSuccessModal(false)} />}
-    </div>
+    </>
   );
 }
 
