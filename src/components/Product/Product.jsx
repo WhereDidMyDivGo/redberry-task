@@ -94,6 +94,8 @@ function Product() {
           name: product.name,
           price: product.price,
           cover_image: product.cover_image,
+          images: product.images,
+          available_colors: product.available_colors,
           color: selectedColor,
           size: selectedSize,
           quantity,

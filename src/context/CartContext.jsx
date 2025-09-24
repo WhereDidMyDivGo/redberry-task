@@ -11,6 +11,12 @@ export function CartProvider({ children }) {
 
   const { token } = useAuth();
 
+  const getColorImage = (images, availableColors, selectedColor) => {
+    if (!images || !availableColors || !selectedColor) return images?.[0] || null;
+    const colorIndex = availableColors.findIndex((color) => color.toLowerCase() === selectedColor.toLowerCase());
+    return colorIndex >= 0 && images[colorIndex] ? images[colorIndex] : images[0];
+  };
+
   const addProduct = (product) => {
     setCart((prevCart) => {
       const idx = prevCart.findIndex((item) => String(item.id) === String(product.id) && item.color === product.color && item.size === product.size);
@@ -21,18 +27,20 @@ export function CartProvider({ children }) {
         const newQuantity = existing.quantity + product.quantity;
         updated[idx] = {
           ...existing,
-          cartKey: existing.cartKey || `${existing.id}-${existing.color}-${existing.size}`, // Ensure cartKey exists
+          cartKey: existing.cartKey || `${existing.id}-${existing.color}-${existing.size}`,
           quantity: newQuantity,
           total_price: existing.price * newQuantity,
         };
         return updated;
       } else {
         const cartKey = `${product.id}-${product.color}-${product.size}`;
+        const colorImage = getColorImage(product.images, product.available_colors, product.color);
         return [
           ...prevCart,
           {
             ...product,
             cartKey,
+            cover_image: colorImage,
             total_price: product.price * product.quantity,
           },
         ];
@@ -63,27 +71,22 @@ export function CartProvider({ children }) {
   };
 
   const changeQuantity = async (productId, action) => {
-    let newQuantity = 1;
+    const currentCart = cart;
+    const item = currentCart.find((i) => i.id === productId);
+    if (!item) return;
+
+    let newQuantity = item.quantity;
+    if (action === "increase") {
+      newQuantity = item.quantity + 1;
+    } else if (action === "decrease" && item.quantity > 1) {
+      newQuantity = item.quantity - 1;
+    }
+
     setCart((prevCart) => {
-      const item = prevCart.find((i) => i.id === productId);
-      if (item) {
-        newQuantity = item.quantity;
-        if (action === "increase") newQuantity = item.quantity + 1;
-        if (action === "decrease" && item.quantity > 1) newQuantity = item.quantity - 1;
-      }
       return prevCart.map((item) => {
         if (item.id !== productId) return item;
-
         const pricePerUnit = item.total_price / item.quantity;
-        if (action === "increase") {
-          const newQty = item.quantity + 1;
-          return { ...item, quantity: newQty, total_price: pricePerUnit * newQty };
-        }
-        if (action === "decrease" && item.quantity > 1) {
-          const newQty = item.quantity - 1;
-          return { ...item, quantity: newQty, total_price: pricePerUnit * newQty };
-        }
-        return item;
+        return { ...item, quantity: newQuantity, total_price: pricePerUnit * newQuantity };
       });
     });
     setLoadingIds((ids) => [...ids, productId]);
@@ -105,10 +108,14 @@ export function CartProvider({ children }) {
   };
 
   const setCartFromAPI = (cartData) => {
-    const normalizedCart = cartData.map((item) => ({
-      ...item,
-      cartKey: `${item.id}-${item.color}-${item.size}`,
-    }));
+    const normalizedCart = cartData.map((item) => {
+      const colorImage = getColorImage(item.images, item.available_colors, item.color);
+      return {
+        ...item,
+        cartKey: `${item.id}-${item.color}-${item.size}`,
+        cover_image: colorImage,
+      };
+    });
     setCart(normalizedCart);
   };
 
