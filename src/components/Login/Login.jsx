@@ -108,7 +108,7 @@ const Login = () => {
               </label>
               <label htmlFor="login-password" className="password">
                 <input id="login-password" autoComplete="current-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={formValues.password} onChange={(e) => setFormValues((v) => ({ ...v, password: e.target.value }))} />
-                <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
+                <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)} tabIndex={-1}>
                   <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
                 </button>
                 {errors.password &&

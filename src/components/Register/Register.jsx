@@ -147,7 +147,7 @@ function Register() {
               </label>
               <label htmlFor="register-password" className="password">
                 <input id="register-password" autoComplete="new-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={formValues.password} onChange={(e) => setFormValues((v) => ({ ...v, password: e.target.value }))} />
-                <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)}>
+                <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)} tabIndex={-1}>
                   <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
                 </button>
                 {errors.password &&
@@ -159,7 +159,7 @@ function Register() {
               </label>
               <label htmlFor="register-confirm-password" className="confirm-password">
                 <input id="register-confirm-password" autoComplete="new-password" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password *" value={formValues.confirmPassword} onChange={(e) => setFormValues((v) => ({ ...v, confirmPassword: e.target.value }))} />
-                <button className="toggle-password" type="button" onClick={() => setShowConfirmPassword((prev) => !prev)}>
+                <button className="toggle-password" type="button" onClick={() => setShowConfirmPassword((prev) => !prev)} tabIndex={-1}>
                   <img className="eye-icon" src={showConfirmPassword ? closedEyeIcon : eyeIcon} alt={showConfirmPassword ? "Hide password" : "Show password"} />
                 </button>
                 {errors.confirmPassword &&
