@@ -130,6 +130,10 @@ function Checkout() {
       });
   };
 
+  const getInputStyle = (hasError) => ({
+    border: `1px solid ${hasError ? "var(--Red, #FF4000)" : "var(--Grey-2, #e1dfe1)"}`,
+  });
+
   return (
     <>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
@@ -142,7 +146,7 @@ function Checkout() {
 
             <div className="inputs">
               <div className="grouped-inputs">
-                <label htmlFor="name">
+                <label htmlFor="name" style={getInputStyle(errors.name)}>
                   <input id="name" type="text" placeholder="Name" autoComplete="given-name" value={formValues.name} onChange={(e) => setFormValues((v) => ({ ...v, name: e.target.value }))} />
                   {errors.name &&
                     errors.name.map((msg, idx) => (
@@ -151,7 +155,7 @@ function Checkout() {
                       </p>
                     ))}
                 </label>
-                <label htmlFor="surname">
+                <label htmlFor="surname" style={getInputStyle(errors.surname)}>
                   <input id="surname" type="text" placeholder="Surname" autoComplete="family-name" value={formValues.surname} onChange={(e) => setFormValues((v) => ({ ...v, surname: e.target.value }))} />
                   {errors.surname &&
                     errors.surname.map((msg, idx) => (
@@ -161,7 +165,7 @@ function Checkout() {
                     ))}
                 </label>
               </div>
-              <label htmlFor="email">
+              <label htmlFor="email" style={getInputStyle(errors.email)}>
                 <img src={emailIcon} />
                 <input id="email" type="text" placeholder="Email" autoComplete="email" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
                 {errors.email &&
@@ -172,7 +176,7 @@ function Checkout() {
                   ))}
               </label>
               <div className="grouped-inputs">
-                <label htmlFor="address">
+                <label htmlFor="address" style={getInputStyle(errors.address)}>
                   <input id="address" type="text" placeholder="Address" autoComplete="street-address" value={formValues.address} onChange={(e) => setFormValues((v) => ({ ...v, address: e.target.value }))} />
                   {errors.address &&
                     errors.address.map((msg, idx) => (
@@ -181,7 +185,7 @@ function Checkout() {
                       </p>
                     ))}
                 </label>
-                <label htmlFor="zip-code">
+                <label htmlFor="zip-code" style={getInputStyle(errors.zip_code)}>
                   <input id="zip-code" type="number" placeholder="Zip code" autoComplete="postal-code" onKeyDown={blockInvalidKeys} value={formValues.zip_code} onChange={(e) => setFormValues((v) => ({ ...v, zip_code: e.target.value }))} />
                   {errors.zip_code &&
                     errors.zip_code.map((msg, idx) => (

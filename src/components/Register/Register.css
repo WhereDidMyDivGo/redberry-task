@@ -71,7 +71,6 @@
           gap: 8px;
           align-self: stretch;
           border-radius: 8px;
-          border: 1px solid var(--Grey-2, #e1dfe1);
           background: var(--White, #fff);
           position: relative;
 

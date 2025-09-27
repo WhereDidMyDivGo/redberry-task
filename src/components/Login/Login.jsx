@@ -87,6 +87,10 @@ const Login = () => {
       });
   };
 
+  const getInputStyle = (hasError) => ({
+    border: `1px solid ${hasError ? "var(--Red, #FF4000)" : "var(--Grey-2, #e1dfe1)"}`,
+  });
+
   return (
     <>
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar={true} />
@@ -97,7 +101,7 @@ const Login = () => {
           <h1>Log in</h1>
           <form onSubmit={handleLogin}>
             <div className="inputs">
-              <label htmlFor="login-email" className="email">
+              <label htmlFor="login-email" className="email" style={getInputStyle(errors.email)}>
                 <input id="login-email" autoComplete="email" type="text" placeholder="Email or username *" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
                 {errors.email &&
                   errors.email.map((msg, idx) => (
@@ -106,7 +110,7 @@ const Login = () => {
                     </p>
                   ))}
               </label>
-              <label htmlFor="login-password" className="password">
+              <label htmlFor="login-password" className="password" style={getInputStyle(errors.password)}>
                 <input id="login-password" autoComplete="current-password" type={showPassword ? "text" : "password"} placeholder="Password *" value={formValues.password} onChange={(e) => setFormValues((v) => ({ ...v, password: e.target.value }))} />
                 <button className="toggle-password" type="button" onClick={() => setShowPassword((prev) => !prev)} tabIndex={-1}>
                   <img className="eye-icon" src={showPassword ? closedEyeIcon : eyeIcon} alt={showPassword ? "Hide password" : "Show password"} />
