@@ -163,7 +163,7 @@ function Checkout() {
               </div>
               <label htmlFor="email">
                 <img src={emailIcon} />
-                <input id="email" type="email" placeholder="Email" autoComplete="email" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
+                <input id="email" type="text" placeholder="Email" autoComplete="email" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
                 {errors.email &&
                   errors.email.map((msg, idx) => (
                     <p className="error-msg" key={idx}>

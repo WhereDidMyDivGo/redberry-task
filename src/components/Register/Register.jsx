@@ -137,7 +137,7 @@ function Register() {
                   ))}
               </label>
               <label htmlFor="register-email" className="email">
-                <input id="register-email" autoComplete="email" type="email" placeholder="Email *" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
+                <input id="register-email" autoComplete="email" type="text" placeholder="Email *" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
                 {errors.email &&
                   errors.email.map((msg, idx) => (
                     <p className="error-msg" key={idx}>

@@ -98,7 +98,7 @@ const Login = () => {
           <form onSubmit={handleLogin}>
             <div className="inputs">
               <label htmlFor="login-email" className="email">
-                <input id="login-email" autoComplete="email" type="email" placeholder="Email or username *" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
+                <input id="login-email" autoComplete="email" type="text" placeholder="Email or username *" value={formValues.email} onChange={(e) => setFormValues((v) => ({ ...v, email: e.target.value }))} />
                 {errors.email &&
                   errors.email.map((msg, idx) => (
                     <p className="error-msg" key={idx}>
