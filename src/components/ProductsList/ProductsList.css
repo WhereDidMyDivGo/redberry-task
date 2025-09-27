@@ -348,7 +348,7 @@
     }
   }
 
-.products {
+  .products {
     margin: 32px 0 90px;
     display: flex;
     align-items: flex-start;
@@ -460,6 +460,8 @@
     .next {
       width: 20px;
       height: 20px;
+      border: none;
+      outline: none;
 
       img {
         width: 10px;
